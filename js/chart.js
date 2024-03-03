@@ -11,7 +11,9 @@ d3.csv('data.csv').then(d => {
                 popularity: song.popularity,
                 valence: song.valence,
                 danceability: song.danceability,
-                genre: song.genre
+                genre: song.genre,
+                name: song.song,
+                artist: song.artist
             })
         }
     };
@@ -22,8 +24,16 @@ d3.csv('data.csv').then(d => {
 
 function createChart(data) {
 
+    // get genres
+    const genres = [];
+    data.forEach(song => {
 
-    // get years
+        if (!genres.includes(parseInt(song.genre))) {
+            genres.push(parseInt(song.genre));
+        }
+    });
+
+    // get all years and active year
     const years = [];
     data.forEach(song => {
 
@@ -33,36 +43,12 @@ function createChart(data) {
     });
     years.sort((a, b) => a - b);
 
+    let activeYear = localStorage.activeYear;
+    if (localStorage.activeYear === undefined) {
+        activeYear = 2015;
+    }
 
-
-}
-
-
-
-// detta är en annan chart gjord på samma data
-function chart(data) {
-
-    // get years
-    const years = [];
-    data.forEach(song => {
-
-        if (!years.includes(parseInt(song.year))) {
-            years.push(parseInt(song.year));
-        }
-    });
-    years.sort((a, b) => a - b);
-
-
-    // calculate average valence for each year
-    const averageValence = [];
-    years.forEach(year => {
-
-        const songsInYear = data.filter(song => song.year == year);
-
-        const totalValence = songsInYear.reduce((sum, song) => sum + parseFloat(song.valence), 0);
-        // averageValence[year] = totalValence / songsInYear.length;
-        averageValence.push({ year: year, averageValence: totalValence / songsInYear.length })
-    });
+    const dataFilteredByYear = data.filter(song => parseInt(song.year) === activeYear);
 
 
     // set variables
@@ -70,22 +56,26 @@ function chart(data) {
         widthCanvas = .90 * widthSvg,
         heightCanvas = .90 * heightSvg,
         widthPad = (widthSvg - widthCanvas) / 2,
-        heightPad = (heightSvg - heightCanvas) / 2,
-        valenceValues = d3.map(averageValence, song => song.averageValence);
+        heightPad = (heightSvg - heightCanvas) / 2;
 
     // scales
 
+    // radius scale
+    const minPopularity = d3.min(data.map(song => song.popularity));
+    const maxPopularity = d3.max(data.map(song => song.popularity));
+    const radiusScale = d3.scaleLinear()
+        .domain([minPopularity, maxPopularity])
+        .range([2, 10]);
+
     // x scale
-    let xScale = d3.scaleBand()
-        .domain(years)
+    let xScale = d3.scaleLinear()
+        .domain([0, d3.max(dataFilteredByYear.map((song) => song.danceability)) * 1.2])
         .range([0, widthCanvas])
-        .paddingInner(1)
-        .paddingOuter(.3);
 
 
     // y scale
     let yScale = d3.scaleLinear()
-        .domain([0, d3.max(valenceValues) * 1.2])
+        .domain([0, d3.max(dataFilteredByYear.map((song) => song.valence)) * 1.2])
         .range([heightCanvas, 0]);
 
 
@@ -102,10 +92,6 @@ function chart(data) {
         .attr("fill", "white");
 
 
-    // create canvas
-    let canvas = svg.append("g")
-        .attr("transform", `translate(${widthPad}, ${heightPad})`);
-
     // axis
     svg.append("g")
         .call(d3.axisLeft(yScale))
@@ -115,33 +101,27 @@ function chart(data) {
         .call(d3.axisBottom(xScale))
         .attr("transform", `translate(${widthPad}, ${heightPad + heightCanvas})`)
 
-    //grid lines
-    svg.append("g")
-        .attr("class", "grid-lines")
-        .selectAll("line")
-        .data(yScale.ticks(10))
-        .enter().append("line")
-        .attr("x1", 0)
-        .attr("x2", widthCanvas)
-        .attr("y1", d => yScale(d))
-        .attr("y2", d => yScale(d))
+    let canvas = svg.append("g")
         .attr("transform", `translate(${widthPad}, ${heightPad})`)
-        .attr("stroke", "lightgrey")
-        .attr("stroke-opacity", 0.5)
-        .attr("shape-rendering", "auto");
-
-    // Create a line generator
-    const lineGenerator = d3.line()
-        .x(d => xScale(d.year))
-        .y(d => yScale(d.averageValence));
-
-    // Create a line
-    canvas.append("path")
-        .datum(averageValence)
-        .attr("fill", "none")
-        .attr("stroke", "grey")
-        .attr("stroke-width", 1.5)
-        .attr("d", lineGenerator);
+        .selectAll("rect")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("fill", setColor)
+        .attr("opacity", 0.6)
+        .attr("r", setRadius)
+        .attr("cx", (d) => xScale(d.danceability))
+        .attr("cy", (d) => yScale(d.valence));
 
 
+    function setColor(d) {
+        return "salmon"
+    }
+
+
+    function setRadius(song) {
+        return radiusScale(song.popularity);
+    }
 }
+
+
