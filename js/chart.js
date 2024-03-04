@@ -19,7 +19,9 @@ d3.csv('data.csv').then(d => {
     };
 
     console.log(data[1]);
+
     createChart(data);
+    createLegend();
 });
 
 function createChart(data) {
@@ -169,4 +171,16 @@ function createChart(data) {
     }
 }
 
+function createLegend() {
 
+    const genreDomain = ["pop", "rock", "R&B", "hip hop", "country"];
+    const colorRange = ["#FF8080", "#CDFADB", "#FFCF96", "#FFBE98", "#A4CE95"];
+
+    let colorScale = d3.scaleBand(genreDomain, colorRange);
+
+    /* The d3.legendColor() function generates a legend for a D3.js color scale. A legend typically consists of a series of colored rectangles or other shapes, each associated with a category or value from the data being visualized. The d3.legendColor() function creates these elements and associates them with the corresponding colors from the scale. */
+    let legendGenre = d3.legendColor()
+        .scale(colorScale)
+
+    console.log(legendGenre);
+}
