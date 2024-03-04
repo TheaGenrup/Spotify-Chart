@@ -3,4 +3,7 @@ TO DO
 
 - Funktionen som fixar färgerna
 - Andra axlar?
+- Labels på axlarna
 - Slider
+- Legend
+- Resten av webbplatsen

@@ -115,7 +115,7 @@ function createChart(data) {
 
 
     function setColor(d) {
-        return "salmon"
+        return "#FF8080";
     }
 
 
