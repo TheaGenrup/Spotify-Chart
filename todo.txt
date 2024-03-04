@@ -1,0 +1,6 @@
+
+TO DO
+
+- Funktionen som fixar färgerna
+- Andra axlar?
+- Slider
