@@ -1,6 +1,35 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #87645d;
+    padding: 0 5vw;
+}
+
+
+h2,
+p:not(#introduction) {
+    width: 75vw;
+}
+
+h1 {
+    font-size: 5vh;
+    text-align: center;
+    color: #87645d;
+}
+
+#introduction {
+    color: #87645d;
+    font-size: 2vh;
+}
+
+
 text,
 path,
 line {
     font-size: 1.7vh;
+    color: #87645d;
+}
+
+h2 {
+    font-size: 5vh;
     color: #87645d;
 }

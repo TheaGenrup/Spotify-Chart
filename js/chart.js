@@ -28,10 +28,13 @@ function createChart(data) {
     const genres = [];
     data.forEach(song => {
 
-        if (!genres.includes(parseInt(song.genre))) {
-            genres.push(parseInt(song.genre));
+        if (!genres.includes(song.genre)) {
+            genres.push(song.genre);
         }
     });
+
+    console.log(genres);
+
 
     // get all years and active year
     const years = [];
@@ -43,13 +46,14 @@ function createChart(data) {
     });
     years.sort((a, b) => a - b);
 
+
     let activeYear = localStorage.activeYear;
     if (localStorage.activeYear === undefined) {
-        activeYear = 2015;
+        activeYear = 2010;
     }
 
     const dataFilteredByYear = data.filter(song => parseInt(song.year) === activeYear);
-
+    // console.log(data.filter(song => song.genre == "hip hop, pop"));
 
     // set variables
     const heightSvg = 500, widthSvg = 900,
@@ -80,8 +84,10 @@ function createChart(data) {
 
 
     // create SVG
-    let svg = d3.select("body").append("svg")
+    let svg = d3.select("#visualisation").append("svg")
         .attr("width", widthSvg).attr("height", heightSvg)
+        .attr("transform", `translate(${widthPad}, ${heightPad})`)
+
 
     // create canvas background
     svg.append("rect")
@@ -96,10 +102,21 @@ function createChart(data) {
     svg.append("g")
         .call(d3.axisLeft(yScale))
         .attr("transform", `translate(${widthPad}, ${heightPad})`)
+        .attr("text-anchor", "end")
+        .append("text")
+        .text("Valence")
+        .attr("transform", `translate(${widthPad / 2}, ${-10})`)
+        .attr("fill", "white");
+
 
     svg.append("g")
         .call(d3.axisBottom(xScale))
         .attr("transform", `translate(${widthPad}, ${heightPad + heightCanvas})`)
+    /*         .attr("text-anchor", "end")
+            .append("text")
+            .text("Danceability")
+            .attr("transform", `translate(${widthCanvas + widthPad}, ${-10})`)
+            .attr("fill", "white"); */
 
     let canvas = svg.append("g")
         .attr("transform", `translate(${widthPad}, ${heightPad})`)
@@ -108,14 +125,42 @@ function createChart(data) {
         .enter()
         .append("circle")
         .attr("fill", setColor)
-        .attr("opacity", 0.6)
+        .attr("opacity", 0.7)
         .attr("r", setRadius)
         .attr("cx", (d) => xScale(d.danceability))
         .attr("cy", (d) => yScale(d.valence));
 
+    /* 
+        const newGenres = [
+            { genre: "Pop", color: "#FF8080" },
+            { genre: "Rock", color: "#CDFADB" },
+            { genre: "R&B", color: "#FFCF96" },
+        ]; */
 
-    function setColor(d) {
-        return "#FF8080";
+    function setColor(song) {
+
+        switch (song.genre) {
+            case "pop":
+                return "#FF8080";
+                break;
+
+            case "rock":
+                return "#CDFADB";
+                break;
+            case "R&B":
+                return "#FFCF96";
+                break;
+            case "hip hop":
+                return "#FFBE98";
+                break;
+            case "country":
+                return "#A4CE95";
+                break;
+            default:
+                return "none";
+
+                break;
+        }
     }
 
 

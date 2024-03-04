@@ -1,9 +1,14 @@
 
 TO DO
 
-- Funktionen som fixar färgerna
 - Andra axlar?
 - Labels på axlarna
 - Slider
 - Legend
 - Resten av webbplatsen
+
+Frågor
+- Andra axlar?
+- Responsivitet?
+- Labels på axlarna, de adnra flyttas
+- Får vi placera en svg i en div som vi gör i html, får vi göra saker i html?
