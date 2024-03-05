@@ -58,9 +58,9 @@ function createChart(data) {
     // console.log(data.filter(song => song.genre == "hip hop, pop"));
 
     // set variables
-    const heightSvg = 500, widthSvg = 900,
-        widthCanvas = .90 * widthSvg,
-        heightCanvas = .90 * heightSvg,
+    const heightSvg = 600, widthSvg = 900,
+        widthCanvas = .80 * widthSvg,
+        heightCanvas = .80 * heightSvg,
         widthPad = (widthSvg - widthCanvas) / 2,
         heightPad = (heightSvg - heightCanvas) / 2;
 
@@ -71,7 +71,7 @@ function createChart(data) {
     const maxPopularity = d3.max(data.map(song => song.popularity));
     const radiusScale = d3.scaleLinear()
         .domain([minPopularity, maxPopularity])
-        .range([2, 10]);
+        .range([4, 12]);
 
     // x scale
     let xScale = d3.scaleLinear()
@@ -88,7 +88,7 @@ function createChart(data) {
     // create SVG
     let svg = d3.select("#visualisation").append("svg")
         .attr("width", widthSvg).attr("height", heightSvg)
-        .attr("transform", `translate(${widthPad}, ${heightPad})`)
+        .attr("transform", `translate(${widthPad}, 0)`)
 
 
     // create canvas background
@@ -188,7 +188,7 @@ function createLegend() {
     //felet var är att elementet jag placera g:et i inte är ett svg-elemet
     svg.append("g")
         .call(legendGenres)
-        .attr("transform", "translate(800,100)")
+        .attr("transform", "translate(600,600)")
         .selectAll("text")
         .style("fill", "white")
 

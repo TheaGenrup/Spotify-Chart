@@ -33,3 +33,7 @@ h2 {
     font-size: 5vh;
     color: #87645d;
 }
+
+svg {
+    overflow: visible;
+}
