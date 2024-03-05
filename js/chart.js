@@ -182,14 +182,20 @@ function createLegend() {
 
     let legendGenres = d3.legendColor()
         .scale(colorScale)
+        .shape("circle")
+        .shapeRadius(11)
+    //.orient("horizontal")
+
 
     let svg = d3.select("svg")
 
     //felet var är att elementet jag placera g:et i inte är ett svg-elemet
-    svg.append("g")
+
+    let g = svg.append("g")
         .call(legendGenres)
         .attr("transform", "translate(600,600)")
         .selectAll("text")
         .style("fill", "white")
+
 
 } 
