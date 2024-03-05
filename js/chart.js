@@ -145,7 +145,6 @@ function createChart(data) {
             case "pop":
                 return "#FF8080";
                 break;
-
             case "rock":
                 return "#CDFADB";
                 break;
@@ -173,14 +172,24 @@ function createChart(data) {
 
 function createLegend() {
 
-    const genreDomain = ["pop", "rock", "R&B", "hip hop", "country"];
-    const colorRange = ["#FF8080", "#CDFADB", "#FFCF96", "#FFBE98", "#A4CE95"];
+    const genreDomain = ["Pop", "Hip Hop", "R&B", "Country", "Rock"];
+    const colorRange = ["#FF8080", "#FFBE98", "#FFCF96", "#A4CE95", "#CDFADB"];
 
-    let colorScale = d3.scaleBand(genreDomain, colorRange);
+    let colorScale = d3.scaleOrdinal(genreDomain, colorRange);
 
-    /* The d3.legendColor() function generates a legend for a D3.js color scale. A legend typically consists of a series of colored rectangles or other shapes, each associated with a category or value from the data being visualized. The d3.legendColor() function creates these elements and associates them with the corresponding colors from the scale. */
-    let legendGenre = d3.legendColor()
+    console.log(genreDomain);
+    console.log(colorRange);
+
+    let legendGenres = d3.legendColor()
         .scale(colorScale)
 
-    console.log(legendGenre);
-}
+    let svg = d3.select("svg")
+
+    //felet var är att elementet jag placera g:et i inte är ett svg-elemet
+    svg.append("g")
+        .call(legendGenres)
+        .attr("transform", "translate(800,100)")
+        .selectAll("text")
+        .style("fill", "white")
+
+} 
