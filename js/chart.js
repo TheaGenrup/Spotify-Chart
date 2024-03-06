@@ -121,6 +121,7 @@ function createChart(data) {
 
     let canvas = svg.append("g")
         .attr("transform", `translate(${widthPad}, ${heightPad})`)
+        .attr("classed", `canvas`, true)
         .selectAll("rect")
         .data(data)
         .enter()
@@ -165,6 +166,27 @@ function createChart(data) {
         .attr("transform", `translate(${0}, ${0})`)
         .call(sliderAxis);
 
+    //let oldSliderValue = localStorage.getItem("activeYear");
+    let oldSliderValue = 2010;
+    if (oldSliderValue == null) {
+        oldSliderValue = 2010
+    }
+    slider.value = oldSliderValue;
+    console.log(oldSliderValue);
+
+    // update the slider value element when the slider's value changes
+    slider.addEventListener("input", () => {
+        //   localStorage.activeYear = slider.value;
+        const newSliderValue = document.querySelector("#slider").value;
+
+        const dataFilteredByNewYear = data.filter(song => parseInt(song.year) === newSliderValue);
+
+        updateData(dataFilteredByNewYear);
+
+    });
+
+
+
 
     function setColor(song) {
 
@@ -196,38 +218,21 @@ function createChart(data) {
         return radiusScale(song.popularity);
     }
 
-    createSlider(data, svg);
-
 }
 
-function createSlider(data, svg) {
+// function to update the data based on the active year
+function updateData(newData) {
+    // const dataFilteredByYear = data.filter(song => parseInt(song.year) === parseInt(localStorage.activeYear));
+    // update the visualization with the filtered data
+    // createChart(dataFilteredByYear);
 
-
-
-    /* 
-        // create the slider value element
-        const sliderValue = document.querySelector("#slider").value;
-        console.log(sliderValue);
-    
-        // update the slider value element when the slider's value changes
-        slider.addEventListener("input", () => {
-            sliderValue.textContent = slider.value;
-            localStorage.activeYear = slider.value;
-            updateData();
-        });
-    
-        // initialize the slider value and update the data
-        sliderValue.textContent = slider.value;
-        localStorage.activeYear = slider.value;
-        updateData();
-    
-        // function to update the data based on the active year
-        function updateData() {
-            const dataFilteredByYear = data.filter(song => parseInt(song.year) === parseInt(localStorage.activeYear));
-            // update the visualization with the filtered data
-            createChart(dataFilteredByYear);
-        } */
+    d3.select("#canvas")
+        .selectAll("circle")
+        .data(newData)
+        .transition()
+        .duration()
 }
+
 
 function createLegend() {
 
