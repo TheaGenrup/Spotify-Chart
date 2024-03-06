@@ -35,8 +35,6 @@ function createChart(data) {
         }
     });
 
-    console.log(genres);
-
 
     // get all years and active year
     const years = [];
@@ -89,6 +87,7 @@ function createChart(data) {
     let svg = d3.select("#visualisation").append("svg")
         .attr("width", widthSvg).attr("height", heightSvg)
         .attr("transform", `translate(${widthPad}, 0)`)
+        .attr("classed", `visualisationSvg`, true)
 
 
     // create canvas background
@@ -139,6 +138,34 @@ function createChart(data) {
             { genre: "R&B", color: "#FFCF96" },
         ]; */
 
+    // create the slider
+    const slider = document.createElement("input");
+    document.querySelector("#sliderContainer").append(slider);
+    slider.type = "range";
+    slider.min = "2010";
+    slider.max = "2019";
+    slider.value = "2010";
+    slider.id = "slider";
+
+    const sliderWidth = 673;
+
+    let sliderSvg = d3.select("#sliderContainer").append("svg")
+        .attr("width", widthSvg).attr("width", sliderWidth)
+        .attr("transform", `translate(${0}, 0)`)
+
+    const sliderScale = d3.scaleLinear()
+        .domain([2010, 2019])
+        .range([0, sliderWidth]);
+
+    const sliderAxis = d3.axisBottom(sliderScale)
+        .tickFormat(d => d)
+        .tickValues([2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019]);
+
+    let sliderAxisGroup = sliderSvg.append("g")
+        .attr("transform", `translate(${0}, ${0})`)
+        .call(sliderAxis);
+
+
     function setColor(song) {
 
         switch (song.genre) {
@@ -168,6 +195,38 @@ function createChart(data) {
     function setRadius(song) {
         return radiusScale(song.popularity);
     }
+
+    createSlider(data, svg);
+
+}
+
+function createSlider(data, svg) {
+
+
+
+    /* 
+        // create the slider value element
+        const sliderValue = document.querySelector("#slider").value;
+        console.log(sliderValue);
+    
+        // update the slider value element when the slider's value changes
+        slider.addEventListener("input", () => {
+            sliderValue.textContent = slider.value;
+            localStorage.activeYear = slider.value;
+            updateData();
+        });
+    
+        // initialize the slider value and update the data
+        sliderValue.textContent = slider.value;
+        localStorage.activeYear = slider.value;
+        updateData();
+    
+        // function to update the data based on the active year
+        function updateData() {
+            const dataFilteredByYear = data.filter(song => parseInt(song.year) === parseInt(localStorage.activeYear));
+            // update the visualization with the filtered data
+            createChart(dataFilteredByYear);
+        } */
 }
 
 function createLegend() {
@@ -176,9 +235,6 @@ function createLegend() {
     const colorRange = ["#FF8080", "#FFBE98", "#FFCF96", "#A4CE95", "#CDFADB"];
 
     let colorScale = d3.scaleOrdinal(genreDomain, colorRange);
-
-    console.log(genreDomain);
-    console.log(colorRange);
 
     let legendGenres = d3.legendColor()
         .scale(colorScale)

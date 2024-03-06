@@ -21,6 +21,13 @@ h1 {
     font-size: 2vh;
 }
 
+#visualisation {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 
 text,
 path,
@@ -36,4 +43,41 @@ h2 {
 
 svg {
     overflow: visible;
+}
+
+#sliderContainer {
+    width: 700px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    align-items: center;
+}
+
+input {
+    width: 700px;
+    height: 25px;
+    margin: 50px 0 0 0;
+    appearance: none;
+    background: none;
+    outline: none;
+    border: #bc7b7b 1px solid;
+    border-radius: 20px;
+}
+
+input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    background: #bc7b7b;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+input::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: #bc7b7b;
+    cursor: pointer;
+    border-radius: 50%;
 }
