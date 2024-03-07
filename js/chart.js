@@ -35,8 +35,6 @@ function createChart(data) {
         }
     });
 
-    console.log(genres);
-
 
     // get all years and active year
     const years = [];
@@ -75,13 +73,13 @@ function createChart(data) {
 
     // x scale
     let xScale = d3.scaleLinear()
-        .domain([0, d3.max(dataFilteredByYear.map((song) => song.danceability)) * 1.2])
+        .domain([0, 1])
         .range([0, widthCanvas])
 
 
     // y scale
     let yScale = d3.scaleLinear()
-        .domain([0, d3.max(dataFilteredByYear.map((song) => song.valence)) * 1.2])
+        .domain([0, 1])
         .range([heightCanvas, 0]);
 
 
@@ -89,6 +87,7 @@ function createChart(data) {
     let svg = d3.select("#visualisation").append("svg")
         .attr("width", widthSvg).attr("height", heightSvg)
         .attr("transform", `translate(${widthPad}, 0)`)
+        .attr("id", `visualisationSvg`, true)
 
 
     // create canvas background
@@ -122,6 +121,7 @@ function createChart(data) {
 
     let canvas = svg.append("g")
         .attr("transform", `translate(${widthPad}, ${heightPad})`)
+        .attr("id", `canvas`, true)
         .selectAll("rect")
         .data(data)
         .enter()
@@ -138,6 +138,87 @@ function createChart(data) {
             { genre: "Rock", color: "#CDFADB" },
             { genre: "R&B", color: "#FFCF96" },
         ]; */
+
+    // create the slider
+    const slider = document.createElement("input");
+    document.querySelector("#sliderContainer").append(slider);
+    slider.type = "range";
+    slider.min = "2010";
+    slider.max = "2019";
+    slider.value = "2010";
+    slider.id = "slider";
+
+    const sliderWidth = 673;
+
+    let sliderSvg = d3.select("#sliderContainer").append("svg")
+        .attr("height", 20).attr("width", sliderWidth)
+        .attr("transform", `translate(${0}, 0)`);
+
+    const sliderScale = d3.scaleLinear()
+        .domain([2010, 2019])
+        .range([0, sliderWidth]);
+
+    const sliderAxis = d3.axisBottom(sliderScale)
+        .tickFormat(d => d)
+    //  .tickValues([2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019]);
+
+    let sliderAxisGroup = sliderSvg.append("g")
+        .attr("transform", `translate(${0}, ${0})`)
+        .call(sliderAxis);
+
+    //let oldSliderValue = localStorage.getItem("activeYear");
+    /*     let oldSliderValue = 2010;
+        if (oldSliderValue == null) {
+            oldSliderValue = 2010
+        }
+        slider.value = oldSliderValue; */
+
+    // update the slider value element when the slider's value changes
+    /* slider.addEventListener("change", () => {
+        //   localStorage.activeYear = slider.value;
+        const newSliderValue = document.querySelector("#slider").value;
+
+        const dataFilteredByNewYear = data.filter(song => parseInt(song.year) == newSliderValue);
+
+
+        console.log(1);
+
+        d3.select("#canvas")
+            .selectAll("circle")
+            .data(dataFilteredByNewYear)
+            //  .transition()
+            //.duration()
+            .attr("fill", setColor)
+            .attr("r", setRadius)
+            .attr("cx", (d) => xScale(d.danceability))
+            .attr("cy", (d) => yScale(d.valence));
+
+    }); */
+
+    slider.addEventListener("change", () => {
+        const newSliderValue = document.querySelector("#slider").value;
+        const dataFilteredByNewYear = data.filter(song => parseInt(song.year) == newSliderValue);
+
+        console.log(dataFilteredByNewYear);
+
+
+        // Update the data bound to the circles
+        const circles = d3.select("#canvas").selectAll("circle").data(dataFilteredByNewYear);
+
+        // Enter selection: add new circles for new data points
+        circles.enter()
+            .append("circle")
+            .attr("fill", setColor)
+            .merge(circles) // Merge enter and update selections
+            .attr("r", setRadius)
+            .attr("cx", (d) => xScale(d.danceability))
+            .attr("cy", (d) => yScale(d.valence));
+
+        // Exit selection: remove circles for removed data points
+        circles.exit().remove();
+    });
+
+
 
     function setColor(song) {
 
@@ -168,6 +249,16 @@ function createChart(data) {
     function setRadius(song) {
         return radiusScale(song.popularity);
     }
+
+}
+
+// function to update the data based on the active year
+function updateData(newData) {
+    // const dataFilteredByYear = data.filter(song => parseInt(song.year) === parseInt(localStorage.activeYear));
+    // update the visualization with the filtered data
+    // createChart(dataFilteredByYear);
+
+
 }
 
 function createLegend() {
@@ -177,9 +268,6 @@ function createLegend() {
 
     let colorScale = d3.scaleOrdinal(genreDomain, colorRange);
 
-    console.log(genreDomain);
-    console.log(colorRange);
-
     let legendGenres = d3.legendColor()
         .scale(colorScale)
         .shape("circle")
@@ -187,7 +275,7 @@ function createLegend() {
     //.orient("horizontal")
 
 
-    let svg = d3.select("svg")
+    let svg = d3.select("#visualisationSvg")
 
     //felet var är att elementet jag placera g:et i inte är ett svg-elemet
 
