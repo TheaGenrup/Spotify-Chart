@@ -17,8 +17,19 @@ d3.csv('data.csv').then(d => {
             })
         }
     };
+    console.log(data);
 
-    console.log(data[1]);
+    let dataFilteredByGenre = []
+
+    for (const song of data) {
+        if (song.genre == "pop" || song.genre == "rock" || song.genre == "R&B" || song.genre == "hip hop" || song.genre == "country") {
+            dataFilteredByGenre.push(song)
+        }
+    };
+
+
+
+    console.log(dataFilteredByGenre);
 
     createChart(data);
     createLegend();
@@ -252,14 +263,6 @@ function createChart(data) {
 
 }
 
-// function to update the data based on the active year
-function updateData(newData) {
-    // const dataFilteredByYear = data.filter(song => parseInt(song.year) === parseInt(localStorage.activeYear));
-    // update the visualization with the filtered data
-    // createChart(dataFilteredByYear);
-
-
-}
 
 function createLegend() {
 
