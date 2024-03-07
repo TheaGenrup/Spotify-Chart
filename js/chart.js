@@ -113,18 +113,18 @@ function createChart(data) {
         .attr("text-anchor", "end")
         .append("text")
         .text("Valence")
-        .attr("transform", `translate(${widthPad / 2}, ${-10})`)
-        .attr("fill", "white");
+        .attr("transform", `translate(${23}, ${-20})`)
+        .attr("fill", "#87645d");
 
 
     svg.append("g")
         .call(d3.axisBottom(xScale))
-        .attr("transform", `translate(${widthPad}, ${heightPad + heightCanvas})`);
-    /*         .attr("text-anchor", "end")
-            .append("text")
-            .text("Danceability")
-            .attr("transform", `translate(${widthCanvas + widthPad}, ${-10})`)
-            .attr("fill", "white"); */
+        .attr("transform", `translate(${widthPad}, ${heightPad + heightCanvas})`)
+        .attr("text-anchor", "end")
+        .append("text")
+        .text("Danceability")
+        .attr("transform", `translate(${widthCanvas + widthPad}, 5)`)
+        .attr("fill", "#87645d");
 
     let canvas = svg.append("g")
         .attr("transform", `translate(${widthPad}, ${heightPad})`)
@@ -155,7 +155,7 @@ function createChart(data) {
     slider.value = "2010";
     slider.id = "slider";
 
-    const sliderWidth = 673;
+    const sliderWidth = 700;
 
     let sliderSvg = d3.select("#sliderContainer").append("svg")
         .attr("height", 20).attr("width", sliderWidth)
