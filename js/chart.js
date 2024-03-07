@@ -29,7 +29,7 @@ d3.csv('data.csv').then(d => {
 
 
     createChart(dataFilteredByGenre);
-    createLegend();
+    createLegend(dataFilteredByGenre);
 });
 
 function createChart(data) {
@@ -260,7 +260,7 @@ function createChart(data) {
 }
 
 
-function createLegend() {
+function createLegend(data) {
 
     const genreDomain = ["Pop", "Hip Hop", "R&B", "Country", "Rock"];
     const colorRange = ["#FF8080", "#FFBE98", "#FFCF96", "#A4CE95", "#CDFADB"];
@@ -278,16 +278,19 @@ function createLegend() {
 
     //felet var är att elementet jag placera g:et i inte är ett svg-elemet
 
+    const legendHeight = 140;
+
     let g = svg.append("g")
         .call(legendGenres)
+        .attr("height", legendHeight)
         .attr("id", "legend", true)
         .attr("transform", "translate(500,640)")
         .selectAll("text")
         .style("fill", "white");
 
+    let legend = d3.select("#legend");
 
-
-    d3.select("#legend").append("text")
+    legend.append("text")
         .text("Genres")
         .attr("x", -11)
         .attr("y", -35)
@@ -299,4 +302,32 @@ function createLegend() {
     d3.select(".cell:nth-child(3)").attr("transform", "translate(130,0)")
     d3.select(".cell:nth-child(4)").attr("transform", "translate(130,30)")
     d3.select(".cell:nth-child(5)").attr("transform", "translate(260,0)")
+
+    // radius scale
+    const minPopularity = d3.min(data.map(song => song.popularity));
+    const maxPopularity = d3.max(data.map(song => song.popularity));
+    const radiusScale = d3.scaleLinear()
+        .domain([minPopularity, maxPopularity])
+        .range([6, 12]);
+
+    const xScale = d3.scaleBand()
+        .domain([minPopularity, maxPopularity])
+        .range([4, 12]);
+
+    legend.append("g")
+        .selectAll("circle")
+        .data(["", "", "", "", ""])
+        .enter()
+        .append("circle")
+        .attr("r", (d) => setRadius(d))
+        .attr("cx", (d, i) => i * 20)
+        .attr("cy", 0) // Justera avståndet mellan cirklarna
+        .style("fill", "grey");
+
+
+    function setRadius(data) {
+        return radiusScale(data);
+    }
+
+
 } 
