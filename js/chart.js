@@ -87,7 +87,7 @@ function createChart(data) {
     let svg = d3.select("#visualisation").append("svg")
         .attr("width", widthSvg).attr("height", heightSvg)
         .attr("transform", `translate(${widthPad}, 0)`)
-        .attr("classed", `visualisationSvg`, true)
+        .attr("id", `visualisationSvg`, true)
 
 
     // create canvas background
@@ -121,7 +121,7 @@ function createChart(data) {
 
     let canvas = svg.append("g")
         .attr("transform", `translate(${widthPad}, ${heightPad})`)
-        .attr("classed", `canvas`, true)
+        .attr("id", `canvas`, true)
         .selectAll("rect")
         .data(data)
         .enter()
@@ -160,18 +160,18 @@ function createChart(data) {
 
     const sliderAxis = d3.axisBottom(sliderScale)
         .tickFormat(d => d)
-        .tickValues([2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019]);
+    //  .tickValues([2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019]);
 
     let sliderAxisGroup = sliderSvg.append("g")
         .attr("transform", `translate(${0}, ${0})`)
         .call(sliderAxis);
 
     //let oldSliderValue = localStorage.getItem("activeYear");
-    let oldSliderValue = 2010;
-    if (oldSliderValue == null) {
-        oldSliderValue = 2010
-    }
-    slider.value = oldSliderValue;
+    /*     let oldSliderValue = 2010;
+        if (oldSliderValue == null) {
+            oldSliderValue = 2010
+        }
+        slider.value = oldSliderValue; */
 
     // update the slider value element when the slider's value changes
     /* slider.addEventListener("change", () => {
@@ -198,6 +198,8 @@ function createChart(data) {
     slider.addEventListener("change", () => {
         const newSliderValue = document.querySelector("#slider").value;
         const dataFilteredByNewYear = data.filter(song => parseInt(song.year) == newSliderValue);
+
+        console.log(dataFilteredByNewYear);
 
 
         // Update the data bound to the circles
@@ -259,7 +261,6 @@ function updateData(newData) {
 
 }
 
-
 function createLegend() {
 
     const genreDomain = ["Pop", "Hip Hop", "R&B", "Country", "Rock"];
@@ -270,7 +271,7 @@ function createLegend() {
     let legendGenres = d3.legendColor()
         .scale(colorScale)
 
-    let svg = d3.select("visualisationSvg")
+    let svg = d3.select("#visualisationSvg")
 
     //felet var är att elementet jag placera g:et i inte är ett svg-elemet
     svg.append("g")
