@@ -17,9 +17,9 @@ d3.csv('data.csv').then(d => {
             })
         }
     };
-    console.log(data);
 
-    let dataFilteredByGenre = []
+
+    let dataFilteredByGenre = [];
 
     for (const song of data) {
         if (song.genre == "pop" || song.genre == "rock" || song.genre == "R&B" || song.genre == "hip hop" || song.genre == "country") {
@@ -28,10 +28,7 @@ d3.csv('data.csv').then(d => {
     };
 
 
-
-    console.log(dataFilteredByGenre);
-
-    createChart(data);
+    createChart(dataFilteredByGenre);
     createLegend();
 });
 
@@ -85,7 +82,7 @@ function createChart(data) {
     // x scale
     let xScale = d3.scaleLinear()
         .domain([0, 1])
-        .range([0, widthCanvas])
+        .range([0, widthCanvas]);
 
 
     // y scale
@@ -98,7 +95,7 @@ function createChart(data) {
     let svg = d3.select("#visualisation").append("svg")
         .attr("width", widthSvg).attr("height", heightSvg)
         .attr("transform", `translate(${widthPad}, 0)`)
-        .attr("id", `visualisationSvg`, true)
+        .attr("id", `visualisationSvg`, true);
 
 
     // create canvas background
@@ -123,7 +120,7 @@ function createChart(data) {
 
     svg.append("g")
         .call(d3.axisBottom(xScale))
-        .attr("transform", `translate(${widthPad}, ${heightPad + heightCanvas})`)
+        .attr("transform", `translate(${widthPad}, ${heightPad + heightCanvas})`);
     /*         .attr("text-anchor", "end")
             .append("text")
             .text("Danceability")
@@ -170,7 +167,7 @@ function createChart(data) {
         .range([0, sliderWidth]);
 
     const sliderAxis = d3.axisBottom(sliderScale)
-        .tickFormat(d => d)
+        .tickFormat(d => d);
     //  .tickValues([2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019]);
 
     let sliderAxisGroup = sliderSvg.append("g")
@@ -274,7 +271,7 @@ function createLegend() {
     let legendGenres = d3.legendColor()
         .scale(colorScale)
         .shape("circle")
-        .shapeRadius(11)
+        .shapeRadius(11);
     //.orient("horizontal")
 
 
@@ -286,7 +283,7 @@ function createLegend() {
         .call(legendGenres)
         .attr("transform", "translate(600,600)")
         .selectAll("text")
-        .style("fill", "white")
+        .style("fill", "white");
 
 
 } 
