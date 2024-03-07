@@ -18,18 +18,8 @@ d3.csv('data.csv').then(d => {
         }
     };
 
-
-    let dataFilteredByGenre = [];
-
-    for (const song of data) {
-        if (song.genre == "pop" || song.genre == "rock" || song.genre == "R&B" || song.genre == "hip hop" || song.genre == "country") {
-            dataFilteredByGenre.push(song)
-        }
-    };
-
-
-    createChart(dataFilteredByGenre);
-    createLegend(dataFilteredByGenre);
+    createChart(data);
+    createLegend(data);
 });
 
 function createChart(data) {
@@ -130,21 +120,14 @@ function createChart(data) {
         .attr("transform", `translate(${widthPad}, ${heightPad})`)
         .attr("id", `canvas`, true)
         .selectAll("rect")
-        .data(data)
+        .data(dataFilteredByYear)
         .enter()
         .append("circle")
-        .attr("fill", setColor)
         .attr("opacity", 0.7)
         .attr("r", setRadius)
         .attr("cx", (d) => xScale(d.danceability))
         .attr("cy", (d) => yScale(d.valence));
 
-    /* 
-        const newGenres = [
-            { genre: "Pop", color: "#FF8080" },
-            { genre: "Rock", color: "#CDFADB" },
-            { genre: "R&B", color: "#FFCF96" },
-        ]; */
 
     // create the slider
     const slider = document.createElement("input");
@@ -202,7 +185,7 @@ function createChart(data) {
 
     }); */
 
-    slider.addEventListener("change", () => {
+    slider.addEventListener("input", () => {
         const newSliderValue = document.querySelector("#slider").value;
         const dataFilteredByNewYear = data.filter(song => parseInt(song.year) == newSliderValue);
 
@@ -210,19 +193,22 @@ function createChart(data) {
 
 
         // Update the data bound to the circles
-        const circles = d3.select("#canvas").selectAll("circle").data(dataFilteredByNewYear);
+        const circles = d3.select("#canvas").selectAll("circle")
+            .data([])
+            .exit()
+            .remove();
 
-        // Enter selection: add new circles for new data points
-        circles.enter()
+
+        d3.select("#canvas")
+            .selectAll("rect")
+            .data(dataFilteredByNewYear)
+            .enter()
             .append("circle")
-            .attr("fill", setColor)
-            .merge(circles) // Merge enter and update selections
+            .attr("opacity", 0.7)
             .attr("r", setRadius)
             .attr("cx", (d) => xScale(d.danceability))
             .attr("cy", (d) => yScale(d.valence));
 
-        // Exit selection: remove circles for removed data points
-        circles.exit().remove();
     });
 
 
