@@ -94,7 +94,6 @@ function createChart(data) {
     // create SVG
     let svg = d3.select("#visualisation").append("svg")
         .attr("width", widthSvg).attr("height", heightSvg)
-        .attr("transform", `translate(${widthPad}, 0)`)
         .attr("id", `visualisationSvg`, true);
 
 
@@ -281,9 +280,23 @@ function createLegend() {
 
     let g = svg.append("g")
         .call(legendGenres)
-        .attr("transform", "translate(600,600)")
+        .attr("id", "legend", true)
+        .attr("transform", "translate(500,640)")
         .selectAll("text")
         .style("fill", "white");
 
 
+
+    d3.select("#legend").append("text")
+        .text("Genres")
+        .attr("x", -11)
+        .attr("y", -35)
+        .style("fill", "white")
+        .style("font-weight", "bold");
+
+
+    d3.select(".cell:nth-child(2)").attr("transform", "translate(0,30)")
+    d3.select(".cell:nth-child(3)").attr("transform", "translate(130,0)")
+    d3.select(".cell:nth-child(4)").attr("transform", "translate(130,30)")
+    d3.select(".cell:nth-child(5)").attr("transform", "translate(260,0)")
 } 
