@@ -6,32 +6,44 @@ d3.csv('data.csv').then(d => {
 
     for (const song of d) {
         if (song.year >= 2010 && song.year <= 2019) {
+
+            let genreArray = song.genre.split(", ");
+
             data.push({
                 year: song.year,
                 popularity: song.popularity,
                 valence: song.valence,
                 danceability: song.danceability,
-                genre: song.genre,
+                genre: genreArray,
                 name: song.song,
                 artist: song.artist
             })
         }
     };
 
+    console.log(data);
+
     createChart(data);
-    createLegend(data);
+
 });
 
 function createChart(data) {
 
-    // get genres
+
     const genres = [];
+
+
     data.forEach(song => {
 
-        if (!genres.includes(song.genre)) {
-            genres.push(song.genre);
-        }
-    });
+        song.genre.forEach(genre => {
+
+            if (!genres.includes(genre) && genre !== "set()") {
+                genres.push(genre);
+            }
+        });
+
+    })
+    let capitalizedGenres = genres.map(str => str.charAt(0).toUpperCase() + str.slice(1));
 
 
     // get all years and active year
@@ -124,6 +136,8 @@ function createChart(data) {
         .enter()
         .append("circle")
         .attr("opacity", 0.7)
+        .attr("fill", "beige")
+
         .attr("r", setRadius)
         .attr("cx", (d) => xScale(d.danceability))
         .attr("cy", (d) => yScale(d.valence));
@@ -156,40 +170,9 @@ function createChart(data) {
         .attr("transform", `translate(${0}, ${0})`)
         .call(sliderAxis);
 
-    //let oldSliderValue = localStorage.getItem("activeYear");
-    /*     let oldSliderValue = 2010;
-        if (oldSliderValue == null) {
-            oldSliderValue = 2010
-        }
-        slider.value = oldSliderValue; */
-
-    // update the slider value element when the slider's value changes
-    /* slider.addEventListener("change", () => {
-        //   localStorage.activeYear = slider.value;
-        const newSliderValue = document.querySelector("#slider").value;
-
-        const dataFilteredByNewYear = data.filter(song => parseInt(song.year) == newSliderValue);
-
-
-        console.log(1);
-
-        d3.select("#canvas")
-            .selectAll("circle")
-            .data(dataFilteredByNewYear)
-            //  .transition()
-            //.duration()
-            .attr("fill", setColor)
-            .attr("r", setRadius)
-            .attr("cx", (d) => xScale(d.danceability))
-            .attr("cy", (d) => yScale(d.valence));
-
-    }); */
-
     slider.addEventListener("input", () => {
         const newSliderValue = document.querySelector("#slider").value;
         const dataFilteredByNewYear = data.filter(song => parseInt(song.year) == newSliderValue);
-
-        console.log(dataFilteredByNewYear);
 
 
         // Update the data bound to the circles
@@ -200,14 +183,18 @@ function createChart(data) {
 
 
         d3.select("#canvas")
-            .selectAll("rect")
+            .selectAll("circle")
             .data(dataFilteredByNewYear)
             .enter()
             .append("circle")
             .attr("opacity", 0.7)
-            .attr("r", setRadius)
+            .attr("fill", "beige")
             .attr("cx", (d) => xScale(d.danceability))
-            .attr("cy", (d) => yScale(d.valence));
+            .attr("cy", (d) => yScale(d.valence))
+            .attr("r", 0)
+            .transition()
+            .duration(300)
+            .attr("r", setRadius)
 
     });
 
@@ -243,15 +230,17 @@ function createChart(data) {
         return radiusScale(song.popularity);
     }
 
+    createLegend(data, capitalizedGenres);
+
 }
 
 
-function createLegend(data) {
+function createLegend(data, genres) {
 
-    const genreDomain = ["Pop", "Hip Hop", "R&B", "Country", "Rock"];
+    //const genreDomain = ["Pop", "Hip Hop", "R&B", "Country", "Rock"];
     const colorRange = ["#FF8080", "#FFBE98", "#FFCF96", "#A4CE95", "#CDFADB"];
 
-    let colorScale = d3.scaleOrdinal(genreDomain, colorRange);
+    let colorScale = d3.scaleOrdinal(genres, colorRange);
 
     let legendGenres = d3.legendColor()
         .scale(colorScale)
@@ -270,7 +259,7 @@ function createLegend(data) {
         .call(legendGenres)
         .attr("height", legendHeight)
         .attr("id", "legend", true)
-        .attr("transform", "translate(500,640)")
+        .attr("transform", "translate(100,640)")
         .selectAll("text")
         .style("fill", "white");
 
@@ -284,10 +273,17 @@ function createLegend(data) {
         .style("font-weight", "bold");
 
 
-    d3.select(".cell:nth-child(2)").attr("transform", "translate(0,30)")
+    d3.select(".cell:nth-child(2)").attr("transform", "translate(0,75)")
     d3.select(".cell:nth-child(3)").attr("transform", "translate(130,0)")
-    d3.select(".cell:nth-child(4)").attr("transform", "translate(130,30)")
+    d3.select(".cell:nth-child(4)").attr("transform", "translate(130,75)")
     d3.select(".cell:nth-child(5)").attr("transform", "translate(260,0)")
+    d3.select(".cell:nth-child(6)").attr("transform", "translate(260,75)")
+    d3.select(".cell:nth-child(7)").attr("transform", "translate(390,0)")
+    d3.select(".cell:nth-child(8)").attr("transform", "translate(390,75)")
+    d3.select(".cell:nth-child(9)").attr("transform", "translate(520,0)")
+    d3.select(".cell:nth-child(10)").attr("transform", "translate(520,75)")
+    d3.select(".cell:nth-child(11)").attr("transform", "translate(650,0)")
+    d3.select(".cell:nth-child(12)").attr("transform", "translate(650,75)")
 
     // radius scale
     const minPopularity = d3.min(data.map(song => song.popularity));

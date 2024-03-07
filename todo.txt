@@ -1,16 +1,8 @@
 
 TO DO
 
-- Andra axlar?
-- Labels på axlarna
-- Slider
 - Legend
 - Resten av webbplatsen
+- Hover
 
 Frågor
-- Andra axlar? Oklart med 1,1, annars bra.
-- Responsivitet? Nej
-- Labels på axlarna, de adnra flyttas. Han vet inte?
-- Får vi placera en svg i en div som vi gör i html, får vi göra saker i html? Ja det får vi
-
-- ska vi ta bort ngt från datan för att göra skillander tydligare?
