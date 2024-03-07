@@ -73,13 +73,13 @@ function createChart(data) {
 
     // x scale
     let xScale = d3.scaleLinear()
-        .domain([0, d3.max(dataFilteredByYear.map((song) => song.danceability)) * 1.2])
+        .domain([0, 1])
         .range([0, widthCanvas])
 
 
     // y scale
     let yScale = d3.scaleLinear()
-        .domain([0, d3.max(dataFilteredByYear.map((song) => song.valence)) * 1.2])
+        .domain([0, 1])
         .range([heightCanvas, 0]);
 
 
@@ -151,8 +151,8 @@ function createChart(data) {
     const sliderWidth = 673;
 
     let sliderSvg = d3.select("#sliderContainer").append("svg")
-        .attr("width", widthSvg).attr("width", sliderWidth)
-        .attr("transform", `translate(${0}, 0)`)
+        .attr("height", 20).attr("width", sliderWidth)
+        .attr("transform", `translate(${0}, 0)`);
 
     const sliderScale = d3.scaleLinear()
         .domain([2010, 2019])
@@ -172,19 +172,49 @@ function createChart(data) {
         oldSliderValue = 2010
     }
     slider.value = oldSliderValue;
-    console.log(oldSliderValue);
 
     // update the slider value element when the slider's value changes
-    slider.addEventListener("input", () => {
+    /* slider.addEventListener("change", () => {
         //   localStorage.activeYear = slider.value;
         const newSliderValue = document.querySelector("#slider").value;
 
-        const dataFilteredByNewYear = data.filter(song => parseInt(song.year) === newSliderValue);
+        const dataFilteredByNewYear = data.filter(song => parseInt(song.year) == newSliderValue);
 
-        updateData(dataFilteredByNewYear);
 
+        console.log(1);
+
+        d3.select("#canvas")
+            .selectAll("circle")
+            .data(dataFilteredByNewYear)
+            //  .transition()
+            //.duration()
+            .attr("fill", setColor)
+            .attr("r", setRadius)
+            .attr("cx", (d) => xScale(d.danceability))
+            .attr("cy", (d) => yScale(d.valence));
+
+    }); */
+
+    slider.addEventListener("change", () => {
+        const newSliderValue = document.querySelector("#slider").value;
+        const dataFilteredByNewYear = data.filter(song => parseInt(song.year) == newSliderValue);
+
+
+        // Update the data bound to the circles
+        const circles = d3.select("#canvas").selectAll("circle").data(dataFilteredByNewYear);
+
+        // Enter selection: add new circles for new data points
+        circles.enter()
+            .append("circle")
+            .attr("fill", setColor)
+            .merge(circles) // Merge enter and update selections
+            .attr("r", setRadius)
+            .attr("cx", (d) => xScale(d.danceability))
+            .attr("cy", (d) => yScale(d.valence));
+
+        // Exit selection: remove circles for removed data points
+        circles.exit().remove();
     });
-
 
 
 
@@ -226,11 +256,7 @@ function updateData(newData) {
     // update the visualization with the filtered data
     // createChart(dataFilteredByYear);
 
-    d3.select("#canvas")
-        .selectAll("circle")
-        .data(newData)
-        .transition()
-        .duration()
+
 }
 
 
@@ -244,7 +270,7 @@ function createLegend() {
     let legendGenres = d3.legendColor()
         .scale(colorScale)
 
-    let svg = d3.select("svg")
+    let svg = d3.select("visualisationSvg")
 
     //felet var är att elementet jag placera g:et i inte är ett svg-elemet
     svg.append("g")
