@@ -137,7 +137,7 @@ function createChart(data) {
         .append("circle")
         .attr("opacity", 0.7)
         .attr("fill", "beige")
-
+        .attr("data-genre", d => d.genre)
         .attr("r", setRadius)
         .attr("cx", (d) => xScale(d.danceability))
         .attr("cy", (d) => yScale(d.valence));
@@ -189,6 +189,7 @@ function createChart(data) {
             .append("circle")
             .attr("opacity", 0.7)
             .attr("fill", "beige")
+            .attr("data-genre", d => d.genre)
             .attr("cx", (d) => xScale(d.danceability))
             .attr("cy", (d) => yScale(d.valence))
             .attr("r", 0)
@@ -272,6 +273,17 @@ function createLegend(data, genres) {
         .style("fill", "white")
         .style("font-weight", "bold");
 
+    // add genre data attribute to swatches and text
+    d3.select('#legend')
+        .selectAll('.swatch')
+        .data(genres)
+        .attr("data-genre", genre => genre);
+
+    d3.select('#legend')
+        .selectAll('text')
+        .data(genres)
+        .attr("data-genre", genre => genre);
+
 
     d3.select(".cell:nth-child(2)").attr("transform", "translate(0,75)")
     d3.select(".cell:nth-child(3)").attr("transform", "translate(130,0)")
@@ -311,5 +323,64 @@ function createLegend(data, genres) {
         return radiusScale(data);
     }
 
+    // Add title attribute with genre name
+    legendGenres.title = function (d) {
+        return d;
+    }
 
-} 
+    // Add event to legend cells
+
+    document.querySelectorAll(".cell").forEach(cell => cell.addEventListener("mouseover", event => {
+
+        const hoveredGenre = event.originalTarget.getAttribute('data-genre');
+
+        if (hoveredGenre !== undefined) {
+            highlightGenre(hoveredGenre);
+        } else {
+            console.log("Hovered genre is not defined");
+        }
+
+    }));
+    /* 
+        d3.selectAll(".cell")
+            .on("mouseover", function (e) {
+    
+                console.log(e);
+                const hoveredGenre = e.target.querySelector(".label").textContent;
+                if (hoveredGenre !== undefined) {
+                    highlightGenre(hoveredGenre);
+                }
+            })
+            .on("mouseout", function () {
+                const hoveredGenre = d3.select(this).data()[0];
+                if (hoveredGenre !== undefined) {
+                    unhighlightGenre(hoveredGenre);
+                }
+            });
+
+            */
+
+    function highlightGenre(genre) {
+        let x = d3.selectAll("circle")
+        console.log(x);
+        d3.selectAll("circle")
+            .filter(d => d.getAttribute('data-genre').includes(genre))
+            .attr("opacity", 1);
+
+
+        console.log(
+            d3.selectAll("circle"));
+
+        d3.selectAll("circle")
+            .filter(d => !d.genre.includes(genre))
+            .attr("opacity", 0.1);
+    }
+
+    function unhighlightGenre(genre) {
+        d3.selectAll("circle")
+            .attr("opacity", 0.7);
+    }
+}
+
+
+

@@ -84,3 +84,7 @@ input::-moz-range-thumb {
     cursor: pointer;
     border-radius: 50%;
 }
+
+.cell {
+    cursor: pointer;
+}
