@@ -279,24 +279,21 @@ function createLegend(data, genres) {
         });
     //.orient("horizontal")
 
-
-    let svg = d3.select("#visualisationSvg")
+    let legend = d3.select("#visualisationSvg").append("g").attr("id", "Legend", true);
 
     //felet var är att elementet jag placera g:et i inte är ett svg-elemet
 
     const legendHeight = 140;
 
-    let g = svg.append("g")
+    let genresContainer = legend.append("g")
         .call(legendGenres)
+        .attr("id", "genresContainer")
         .attr("height", legendHeight)
-        .attr("id", "legend", true)
-        .attr("transform", "translate(100,640)")
+        .attr("transform", "translate(100,690)")
         .selectAll("text")
         .style("fill", "white");
 
-    let legend = d3.select("#legend");
-
-    legend.append("text")
+    genresContainer.append("text")
         .text("Genres")
         .attr("x", -11)
         .attr("y", -35)
@@ -304,17 +301,18 @@ function createLegend(data, genres) {
         .style("font-weight", "bold");
 
     // add genre data attribute to swatches and text
-    d3.select('#legend')
+    d3.select('#genresContainer')
         .selectAll('.swatch')
         .data(genres)
         .attr("data-genre", genre => genre);
 
-    d3.select('#legend')
+    d3.select('#genresContainer')
         .selectAll('text')
         .data(genres)
         .attr("data-genre", genre => genre);
 
 
+    // detta får vi lösa sen
     d3.select(".cell:nth-child(2)").attr("transform", "translate(0,75)")
     d3.select(".cell:nth-child(3)").attr("transform", "translate(130,0)")
     d3.select(".cell:nth-child(4)").attr("transform", "translate(130,75)")
@@ -332,21 +330,35 @@ function createLegend(data, genres) {
     const maxPopularity = d3.max(data.map(song => song.popularity));
     const radiusScale = d3.scaleLinear()
         .domain([minPopularity, maxPopularity])
-        .range([6, 12]);
+        .range([2, 12]);
 
-    const xScale = d3.scaleBand()
-        .domain([minPopularity, maxPopularity])
-        .range([4, 12]);
+    let popularityData = [89, 66.75, 44.5, 22.25, 1]; //osäker om man får göra såhär
+
+    console.log(minPopularity);
+    console.log(maxPopularity);
+
 
     legend.append("g")
+        .attr("id", "popularityContainer", true)
         .selectAll("circle")
-        .data(["", "", "", "", ""])
+        .data(popularityData)
         .enter()
         .append("circle")
         .attr("r", (d) => setRadius(d))
-        .attr("cx", (d, i) => i * 20)
-        .attr("cy", 0) // Justera avståndet mellan cirklarna
-        .style("fill", "grey");
+        .attr("cx", (d, i) => i * 30) // Justera avståndet mellan cirklarna
+        .attr("cy", 0)
+        .attr("stroke", "grey")
+        .attr("stroke-width", 1)
+        .attr("fill", "none");
+
+    d3.select("#popularityContainer")
+        .attr("transform", "translate(100,640)")
+        .append("text")
+        .text("Popularity")
+        .attr("x", -11)
+        .attr("y", -35)
+        .style("fill", "white")
+        .style("font-weight", "bold");
 
 
     function setRadius(data) {
