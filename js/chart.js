@@ -242,7 +242,6 @@ function createChart(data) {
 
 function createLegend(data, genres) {
 
-    //const genreDomain = ["Pop", "Hip Hop", "R&B", "Country", "Rock"];
     const colorRange = ["#FF8080", "#FFBE98", "#FFCF96", "#A4CE95", "#CDFADB"];
 
     let colorScale = d3.scaleOrdinal(genres, colorRange);
@@ -261,11 +260,24 @@ function createLegend(data, genres) {
                         return 0.1;
                     }
                     return 0.7;
+                })
+                .attr("fill", circle => {
+
+                    const hoveredGenreColor = event.target.parentNode.querySelector(".swatch").style.fill;
+                    console.log(hoveredGenreColor);
+
+
+                    if (circle.genre.includes(hoveredGenre)) {
+                        return hoveredGenreColor;
+                    }
+                    return "beige";
                 });
 
         })
         .on("cellout", () => {
-            d3.selectAll("#canvas circle").attr("opacity", 0.7)
+            d3.selectAll("#canvas circle")
+                .attr("opacity", 0.7)
+                .attr("fill", "beige");
         });
     //.orient("horizontal")
 
