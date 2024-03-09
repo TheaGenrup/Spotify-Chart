@@ -1,33 +1,7 @@
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    color: #87645d;
-    padding: 0 5vw;
+    padding: 0 5vw 60px 5vw;
 }
 
-
-h2,
-p:not(#introduction) {
-    width: 75vw;
-}
-
-h1 {
-    font-size: 5vh;
-    text-align: center;
-    color: #87645d;
-}
-
-#introduction {
-    color: #87645d;
-    font-size: 2vh;
-}
-
-#visualisation {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 100px;
-}
 
 
 text,
@@ -37,9 +11,8 @@ line {
     color: #87645d;
 }
 
-h2 {
-    font-size: 5vh;
-    color: #87645d;
+rect {
+    fill: none;
 }
 
 svg {

@@ -264,8 +264,6 @@ function createLegend(data, genres) {
                 .attr("fill", circle => {
 
                     const hoveredGenreColor = event.target.parentNode.querySelector(".swatch").style.fill;
-                    console.log(hoveredGenreColor);
-
 
                     if (circle.genre.includes(hoveredGenre)) {
                         return hoveredGenreColor;
@@ -359,23 +357,5 @@ function createLegend(data, genres) {
     legendGenres.title = function (d) {
         return d;
     }
-
-
-    function highlightGenre(genre) {
-        let x = d3.selectAll("circle")
-        console.log(x);
-
-        document.querySelectorAll(".cell").forEach(cell => cell.addEventListener("mouseover", event => {
-
-            const genre = event.originalTarget.getAttribute('data-genre');
-            console.log("Klickad cirkel har genren:", genre);
-        }));
-
-
-
-
-    }
-
-
 
 }
