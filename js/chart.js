@@ -203,33 +203,6 @@ function createChart(data) {
     });
 
 
-
-    function setColor(song) {
-
-        switch (song.genre) {
-            case "pop":
-                return "#FF8080";
-                break;
-            case "rock":
-                return "#CDFADB";
-                break;
-            case "R&B":
-                return "#FFCF96";
-                break;
-            case "hip hop":
-                return "#FFBE98";
-                break;
-            case "country":
-                return "#A4CE95";
-                break;
-            default:
-                return "none";
-
-                break;
-        }
-    }
-
-
     function setRadius(song) {
         return radiusScale(song.popularity);
     }
@@ -251,7 +224,8 @@ function createLegend(data, genres) {
         .shape("circle")
         .shapeRadius(11)
         .on("cellover", event => {
-            const hoveredGenre = event.target.parentNode.querySelector("text").textContent.toLowerCase();
+
+            const hoveredGenre = event.target.parentNode.querySelector("text").textContent.toLowerCase().slice(0, -6);
 
             d3.selectAll("#canvas circle")
                 .attr("opacity", circle => {
@@ -333,9 +307,6 @@ function createLegend(data, genres) {
         .range([2, 12]);
 
     let popularityData = [89, 66.75, 44.5, 22.25, 1]; //osäker om man får göra såhär
-
-    console.log(minPopularity);
-    console.log(maxPopularity);
 
 
     legend.append("g")
