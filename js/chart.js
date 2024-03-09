@@ -263,11 +263,11 @@ function createLegend(data, genres) {
         .call(legendGenres)
         .attr("id", "genresContainer")
         .attr("height", legendHeight)
-        .attr("transform", "translate(100,690)")
+        .attr("transform", "translate(100,730)")
         .selectAll("text")
         .style("fill", "white");
 
-    genresContainer.append("text")
+    d3.select("#genresContainer").append("text")
         .text("Genres")
         .attr("x", -11)
         .attr("y", -35)
@@ -288,16 +288,16 @@ function createLegend(data, genres) {
 
     // detta får vi lösa sen
     d3.select(".cell:nth-child(2)").attr("transform", "translate(0,75)")
-    d3.select(".cell:nth-child(3)").attr("transform", "translate(130,0)")
-    d3.select(".cell:nth-child(4)").attr("transform", "translate(130,75)")
-    d3.select(".cell:nth-child(5)").attr("transform", "translate(260,0)")
-    d3.select(".cell:nth-child(6)").attr("transform", "translate(260,75)")
-    d3.select(".cell:nth-child(7)").attr("transform", "translate(390,0)")
-    d3.select(".cell:nth-child(8)").attr("transform", "translate(390,75)")
-    d3.select(".cell:nth-child(9)").attr("transform", "translate(520,0)")
-    d3.select(".cell:nth-child(10)").attr("transform", "translate(520,75)")
-    d3.select(".cell:nth-child(11)").attr("transform", "translate(650,0)")
-    d3.select(".cell:nth-child(12)").attr("transform", "translate(650,75)")
+    d3.select(".cell:nth-child(3)").attr("transform", "translate(150,0)")
+    d3.select(".cell:nth-child(4)").attr("transform", "translate(150,75)")
+    d3.select(".cell:nth-child(5)").attr("transform", "translate(300,0)")
+    d3.select(".cell:nth-child(6)").attr("transform", "translate(300,75)")
+    d3.select(".cell:nth-child(7)").attr("transform", "translate(450,0)")
+    d3.select(".cell:nth-child(8)").attr("transform", "translate(450,75)")
+    d3.select(".cell:nth-child(9)").attr("transform", "translate(600,0)")
+    d3.select(".cell:nth-child(10)").attr("transform", "translate(600,75)")
+    d3.select(".cell:nth-child(11)").attr("transform", "translate(750,0)")
+    d3.select(".cell:nth-child(12)").attr("transform", "translate(750,75)")
 
     // radius scale
     const minPopularity = d3.min(data.map(song => song.popularity));
