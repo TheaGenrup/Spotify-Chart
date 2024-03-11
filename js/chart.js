@@ -7,8 +7,8 @@ d3.csv('data.csv').then(d => {
     for (const song of d) {
         if (song.year >= 2010 && song.year <= 2019) {
 
+            // Delar upp strängen med genrer till en array med genrer som element
             let genreArray = song.genre.split(", ");
-
 
             genreArray = genreArray.map(genre => genre.toLowerCase());
 
@@ -24,17 +24,13 @@ d3.csv('data.csv').then(d => {
         }
     };
 
-    console.log(data);
-
     createChart(data);
 
 });
 
 function createChart(data) {
 
-
     const genres = [];
-
 
     data.forEach(song => {
 
@@ -44,10 +40,9 @@ function createChart(data) {
                 genres.push(genre);
             }
         });
-
     })
-    let capitalizedGenres = genres.map(str => str.charAt(0).toUpperCase() + str.slice(1));
 
+    let capitalizedGenres = genres.map(str => str.charAt(0).toUpperCase() + str.slice(1));
 
     // get all years and active year
     const years = [];
@@ -59,16 +54,8 @@ function createChart(data) {
     });
     years.sort((a, b) => a - b);
 
+    const dataFilteredByYear = data.filter(song => parseInt(song.year) === 2010);
 
-    let activeYear = localStorage.activeYear;
-    if (localStorage.activeYear === undefined) {
-        activeYear = 2010;
-    }
-
-    const dataFilteredByYear = data.filter(song => parseInt(song.year) === activeYear);
-    // console.log(data.filter(song => song.genre == "hip hop, pop"));
-
-    // set variables
     const heightSvg = 700, widthSvg = 1100,
         widthCanvas = .80 * widthSvg,
         heightCanvas = .70 * heightSvg,
@@ -137,14 +124,28 @@ function createChart(data) {
         .attr("cx", (d) => xScale(d.danceability))
         .attr("cy", (d) => yScale(d.valence))
         .on("mouseover", (event, d) => {
+
+            d3.select(".songContainer").remove();
+            d3.select("#visualisationSvg")
+                .append("g")
+                .classed("songContainer", true)
+                .attr("transform", `translate(160, 110)`)
+                .attr("fill", "white")
+                .append("text")
+                .text(`${d.name}`)
+            d3.select(".songContainer").append("text").text(`${d.artist}`).attr("transform", `translate(0, 15)`)
+
             console.log(d.artist, d.name);
+        })
+        .on("mouseout", event => {
+            d3.select(".songContainer").remove();
         })
 
 
     // create the slider
     const slider = document.createElement("input");
     document.querySelector("#sliderContainer").append(slider);
-    slider.type = "range";
+    slider.type = "range"; //skapar linje och prick som man drar
     slider.min = "2010";
     slider.max = "2019";
     slider.value = "2010";
@@ -154,32 +155,28 @@ function createChart(data) {
 
     let sliderSvg = d3.select("#sliderContainer").append("svg")
         .attr("height", 20).attr("width", sliderWidth)
-        .attr("transform", `translate(${0}, 0)`);
 
     const sliderScale = d3.scaleLinear()
         .domain([2010, 2019])
         .range([0, sliderWidth]);
 
+    //Tickformat -> Tar bort kommat som tydligen vill följa med 
     const sliderAxis = d3.axisBottom(sliderScale)
         .tickFormat(d => d);
-    //  .tickValues([2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019]);
 
-    let sliderAxisGroup = sliderSvg.append("g")
-        .attr("transform", `translate(${0}, ${0})`)
-        .call(sliderAxis);
+    sliderSvg.append("g").call(sliderAxis);
 
     slider.addEventListener("input", () => {
         const newSliderValue = document.querySelector("#slider").value;
         const dataFilteredByNewYear = data.filter(song => parseInt(song.year) == newSliderValue);
 
-
-        // Update the data bound to the circles
+        //Delete previous circles
         const circles = d3.select("#canvas").selectAll("circle")
             .data([])
             .exit()
             .remove();
 
-
+        // Update the data bound to the circles
         d3.select("#canvas")
             .selectAll("circle")
             .data(dataFilteredByNewYear)
@@ -193,7 +190,6 @@ function createChart(data) {
             .duration(300)
             .attr("r", setRadius)
 
-
     });
 
 
@@ -201,19 +197,18 @@ function createChart(data) {
         return radiusScale(song.popularity);
     }
 
-    createLegend(data, capitalizedGenres, widthPad, heightSvg);
-
+    createLegend(data, capitalizedGenres, heightSvg);
 
 }
 
-function createLegend(data, genres, widthPad, heightSvg) {
-
-    // const colorRange = ["#FF8080", "#FFBE98", "#FFCF96", "#A4CE95", "#CDFADB", "#B47EBE", "#AAB464", "#F4D67B", "#194D33", "##BB849A"];
+function createLegend(data, genres, heightSvg) {
 
     const colorRange = ["#FF8080", "#FFBE98", "#d7adbe", "#f0a967", "#C27664", "#89B9AD", "#ffd380", "#c56477", "#92ba92", "#f7bbad", "#DF7857", "#F99B7D"];
 
+    //skapar skalan
     let colorScale = d3.scaleOrdinal(genres, colorRange);
 
+    //skapar legenden av skalan
     let legendGenres = d3.legendColor()
         .scale(colorScale)
         .shape("circle")
@@ -248,8 +243,7 @@ function createLegend(data, genres, widthPad, heightSvg) {
         });
 
     let legend = d3.select("#visualisationSvg").append("g").attr("id", "legend", true)
-        .attr("transform", `translate(0,100)`)
-        ;
+        .attr("transform", `translate(0,100)`);
 
     const legendHeight = 140;
 
@@ -267,17 +261,6 @@ function createLegend(data, genres, widthPad, heightSvg) {
         .attr("y", -35)
         .style("fill", "white")
         .style("font-weight", "bold");
-
-    // add genre data attribute to swatches and text
-    d3.select('#genresContainer')
-        .selectAll('.swatch')
-        .data(genres)
-        .attr("data-genre", genre => genre);
-
-    d3.select('#genresContainer')
-        .selectAll('text')
-        .data(genres)
-        .attr("data-genre", genre => genre);
 
     let legendCells = d3.selectAll(".cell");
     let cellGap = 88;
@@ -299,7 +282,6 @@ function createLegend(data, genres, widthPad, heightSvg) {
             cell.attr("transform", `translate(${(i - 1) * cellGap}, 0)`)
         }
 
-
     }
 
     // radius scale
@@ -312,13 +294,13 @@ function createLegend(data, genres, widthPad, heightSvg) {
     // Skapar en array med de rätta värdena
     let highestValue = 100;
     let lowestValue = 1;
-    let stepValue = (highestValue - lowestValue) / 4;
+    let gapValue = (highestValue - lowestValue) / 4;
 
     let popularityData = [];
 
     for (let i = 0; i < 5; i++) {
 
-        let newValue = lowestValue + i * stepValue;
+        let newValue = lowestValue + i * gapValue;
         popularityData.push(newValue);
 
     }

@@ -3,3 +3,5 @@ TO DO
 
 - Göra klart hover på circklarna, glöm inte att den behövs läggas till på 2 ställen.
 - Popularity circles Axel Value
+- Skriva till på lärdomar: Diskussion av lärdomar från projektet: svåraste delarna, viktigaste lärdomar samt
+rekommendationer för kommande studenter
