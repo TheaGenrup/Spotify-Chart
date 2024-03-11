@@ -6,7 +6,7 @@ text,
 path,
 line {
     font-size: 1.7vh;
-    color: #87645d;
+    color: #7d867d;
 }
 
 rect {
@@ -16,6 +16,8 @@ rect {
 svg {
     overflow: visible;
 }
+
+
 
 #sliderContainer {
     width: 800px;
@@ -32,7 +34,7 @@ input {
     appearance: none;
     background: none;
     outline: none;
-    border: #bc7b7b 1px solid;
+    border: #92ba92 1px solid;
     border-radius: 20px;
 }
 
@@ -42,7 +44,7 @@ input::-webkit-slider-thumb {
     border: none;
     width: 25px;
     height: 25px;
-    background: #bc7b7b;
+    background: #92ba92;
     cursor: pointer;
     border-radius: 50%;
 }
@@ -51,11 +53,23 @@ input::-moz-range-thumb {
     border: none;
     width: 25px;
     height: 25px;
-    background: #bc7b7b;
+    background: #92ba92;
     cursor: pointer;
     border-radius: 50%;
 }
 
 .cell {
     cursor: pointer;
+}
+
+#visualisationSvg>g:nth-child(1)>text:nth-child(13),
+#visualisationSvg>g:nth-child(2)>text:nth-child(13) {
+    font-size: 15px;
+}
+
+#visualisationSvg {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }

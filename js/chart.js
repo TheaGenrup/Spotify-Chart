@@ -69,7 +69,7 @@ function createChart(data) {
     // console.log(data.filter(song => song.genre == "hip hop, pop"));
 
     // set variables
-    const heightSvg = 700, widthSvg = 1000,
+    const heightSvg = 700, widthSvg = 1100,
         widthCanvas = .80 * widthSvg,
         heightCanvas = .70 * heightSvg,
         widthPad = (widthSvg - widthCanvas) / 2,
@@ -108,8 +108,9 @@ function createChart(data) {
         .attr("text-anchor", "end")
         .append("text")
         .text("Valence")
-        .attr("transform", `translate(${23}, ${-20})`)
-        .attr("fill", "#87645d");
+        .attr("transform", `translate(${27}, ${-20})`)
+        .attr("fill", "#7d867d")
+        .attr("font-weight", "bold");
 
 
     svg.append("g")
@@ -119,7 +120,8 @@ function createChart(data) {
         .append("text")
         .text("Danceability")
         .attr("transform", `translate(${widthCanvas + widthPad}, 5)`)
-        .attr("fill", "#87645d");
+        .attr("fill", "#7d867d")
+        .attr("font-weight", "bold");
 
     let canvas = svg.append("g")
         .attr("transform", `translate(${widthPad}, ${heightPad})`)
@@ -129,7 +131,7 @@ function createChart(data) {
         .enter()
         .append("circle")
         .attr("opacity", 0.7)
-        .attr("fill", "beige")
+        .attr("fill", "white")
         .attr("class", d => d.genre)
         .attr("r", setRadius)
         .attr("cx", (d) => xScale(d.danceability))
@@ -205,7 +207,9 @@ function createChart(data) {
 
 function createLegend(data, genres, widthPad, heightSvg) {
 
-    const colorRange = ["#FF8080", "#FFBE98", "#FFCF96", "#A4CE95", "#CDFADB"];
+    // const colorRange = ["#FF8080", "#FFBE98", "#FFCF96", "#A4CE95", "#CDFADB", "#B47EBE", "#AAB464", "#F4D67B", "#194D33", "##BB849A"];
+
+    const colorRange = ["#FF8080", "#FFBE98", "#d7adbe", "#f0a967", "#C27664", "#89B9AD", "#ffd380", "#c56477", "#92ba92", "#f7bbad", "#DF7857", "#F99B7D"];
 
     let colorScale = d3.scaleOrdinal(genres, colorRange);
 
@@ -232,18 +236,18 @@ function createLegend(data, genres, widthPad, heightSvg) {
                     if (circle.genre.includes(hoveredGenre)) {
                         return hoveredGenreColor;
                     }
-                    return "beige";
+                    return "white";
                 });
 
         })
         .on("cellout", () => {
             d3.selectAll("#canvas circle")
                 .attr("opacity", 0.7)
-                .attr("fill", "beige");
+                .attr("fill", "white");
         });
     //.orient("horizontal")
 
-    let legend = d3.select("#visualisationSvg").append("g").attr("id", "Legend", true)
+    let legend = d3.select("#visualisationSvg").append("g").attr("id", "legend", true)
         .attr("transform", `translate(${0},${100})`)
         ;
 
@@ -335,9 +339,8 @@ function createLegend(data, genres, widthPad, heightSvg) {
         .attr("r", (d) => setRadius(d))
         .attr("cx", (d, i) => i * 30 + i * setRadius(d)) // Justera avståndet mellan cirklarna
         .attr("cy", 0)
-        .attr("stroke", "grey")
-        .attr("stroke-width", 1)
-        .attr("fill", "none");
+        .attr("opacity", 0.7)
+        .attr("fill", "white");
 
     d3.select("#popularityContainer")
         .attr("transform", "translate(100,600)")
