@@ -1,7 +1,5 @@
 
 TO DO
 
-- Legend
-- Resten av webbplatsen
-
-Frågor
+- Göra klart hover på circklarna, glöm inte att den behövs läggas till på 2 ställen.
+- Popularity circles Axel Value

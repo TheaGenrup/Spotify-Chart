@@ -135,7 +135,10 @@ function createChart(data) {
         .attr("class", d => d.genre)
         .attr("r", setRadius)
         .attr("cx", (d) => xScale(d.danceability))
-        .attr("cy", (d) => yScale(d.valence));
+        .attr("cy", (d) => yScale(d.valence))
+        .on("mouseover", (event, d) => {
+            console.log(d.artist, d.name);
+        })
 
 
     // create the slider
@@ -184,13 +187,12 @@ function createChart(data) {
             .append("circle")
             .attr("opacity", 0.7)
             .attr("fill", "beige")
-            .attr("data-genre", d => d.genre)
             .attr("cx", (d) => xScale(d.danceability))
             .attr("cy", (d) => yScale(d.valence))
-            .attr("r", 0)
             .transition()
             .duration(300)
             .attr("r", setRadius)
+
 
     });
 
@@ -203,7 +205,6 @@ function createChart(data) {
 
 
 }
-
 
 function createLegend(data, genres, widthPad, heightSvg) {
 
@@ -227,7 +228,7 @@ function createLegend(data, genres, widthPad, heightSvg) {
                     if (!circle.genre.includes(hoveredGenre)) {
                         return 0.1;
                     }
-                    return 0.7;
+                    return 0.9;
                 })
                 .attr("fill", circle => {
 
@@ -242,16 +243,13 @@ function createLegend(data, genres, widthPad, heightSvg) {
         })
         .on("cellout", () => {
             d3.selectAll("#canvas circle")
-                .attr("opacity", 0.7)
+                .attr("opacity", 0.8)
                 .attr("fill", "white");
         });
-    //.orient("horizontal")
 
     let legend = d3.select("#visualisationSvg").append("g").attr("id", "legend", true)
-        .attr("transform", `translate(${0},${100})`)
+        .attr("transform", `translate(0,100)`)
         ;
-
-    //felet var är att elementet jag placera g:et i inte är ett svg-elemet
 
     const legendHeight = 140;
 
@@ -259,7 +257,7 @@ function createLegend(data, genres, widthPad, heightSvg) {
         .call(legendGenres)
         .attr("id", "genresContainer")
         .attr("height", legendHeight)
-        .attr("transform", `translate(${widthPad},${heightSvg})`)
+        .attr("transform", `translate(100,${heightSvg})`)
         .selectAll("text")
         .style("fill", "white");
 
@@ -282,14 +280,13 @@ function createLegend(data, genres, widthPad, heightSvg) {
         .attr("data-genre", genre => genre);
 
     let legendCells = d3.selectAll(".cell");
-    let cellGap = 80;
+    let cellGap = 88;
 
     for (let i = 0; i < legendCells.size() + 1; i++) {
 
         let cell = d3.select(`.cell:nth-child(${i})`)
 
         if (i % 2 === 0) {
-
             cell.attr("transform", `translate(${(i - 1) * cellGap - cellGap}, 55)`)
         }
 
@@ -299,7 +296,6 @@ function createLegend(data, genres, widthPad, heightSvg) {
         let cell = d3.select(`.cell:nth-child(${i})`)
 
         if (i % 2 !== 0) {
-
             cell.attr("transform", `translate(${(i - 1) * cellGap}, 0)`)
         }
 
@@ -355,10 +351,4 @@ function createLegend(data, genres, widthPad, heightSvg) {
     function setRadius(data) {
         return radiusScale(data);
     }
-
-    // Add title attribute with genre name
-    legendGenres.title = function (d) {
-        return d;
-    }
-
 }
