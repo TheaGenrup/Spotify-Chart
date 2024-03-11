@@ -101,16 +101,6 @@ function createChart(data) {
         .attr("width", widthSvg).attr("height", heightSvg)
         .attr("id", `visualisationSvg`, true);
 
-
-    // create canvas background
-    svg.append("rect")
-        .attr("width", widthCanvas)
-        .attr("height", heightCanvas)
-        .attr("x", widthPad)
-        .attr("y", heightPad)
-        .attr("fill", "white");
-
-
     // axis
     svg.append("g")
         .call(d3.axisLeft(yScale))
@@ -225,7 +215,7 @@ function createLegend(data, genres) {
         .shapeRadius(11)
         .on("cellover", event => {
 
-            const hoveredGenre = event.target.parentNode.querySelector("text").textContent.toLowerCase().slice(0, -6);
+            const hoveredGenre = event.target.parentNode.querySelector("text").textContent.toLowerCase()
 
             d3.selectAll("#canvas circle")
                 .attr("opacity", circle => {
@@ -286,28 +276,67 @@ function createLegend(data, genres) {
         .attr("data-genre", genre => genre);
 
 
-    // detta får vi lösa sen
-    d3.select(".cell:nth-child(2)").attr("transform", "translate(0,75)")
-    d3.select(".cell:nth-child(3)").attr("transform", "translate(150,0)")
-    d3.select(".cell:nth-child(4)").attr("transform", "translate(150,75)")
-    d3.select(".cell:nth-child(5)").attr("transform", "translate(300,0)")
-    d3.select(".cell:nth-child(6)").attr("transform", "translate(300,75)")
-    d3.select(".cell:nth-child(7)").attr("transform", "translate(450,0)")
-    d3.select(".cell:nth-child(8)").attr("transform", "translate(450,75)")
-    d3.select(".cell:nth-child(9)").attr("transform", "translate(600,0)")
-    d3.select(".cell:nth-child(10)").attr("transform", "translate(600,75)")
-    d3.select(".cell:nth-child(11)").attr("transform", "translate(750,0)")
-    d3.select(".cell:nth-child(12)").attr("transform", "translate(750,75)")
+    /*     // detta får vi lösa sen
+        d3.select(".cell:nth-child(2)").attr("transform", "translate(0,75)")
+        d3.select(".cell:nth-child(3)").attr("transform", "translate(150,0)")
+        d3.select(".cell:nth-child(4)").attr("transform", "translate(150,75)")
+        d3.select(".cell:nth-child(5)").attr("transform", "translate(300,0)")
+        d3.select(".cell:nth-child(6)").attr("transform", "translate(300,75)")
+        d3.select(".cell:nth-child(7)").attr("transform", "translate(450,0)")
+        d3.select(".cell:nth-child(8)").attr("transform", "translate(450,75)")
+        d3.select(".cell:nth-child(9)").attr("transform", "translate(600,0)")
+        d3.select(".cell:nth-child(10)").attr("transform", "translate(600,75)")
+        d3.select(".cell:nth-child(11)").attr("transform", "translate(750,0)")
+        d3.select(".cell:nth-child(12)").attr("transform", "translate(750,75)")
+     */
+    let legendCells = d3.selectAll(".cell");
+    let cellGap = 80;
+
+    for (let i = 0; i < legendCells.size() + 1; i++) {
+
+        let cell = d3.select(`.cell:nth-child(${i})`)
+
+        if (i % 2 === 0) {
+
+            cell.attr("transform", `translate(${(i - 1) * cellGap - cellGap}, 75)`)
+        }
+
+    }
+    for (let i = 0; i < legendCells.size(); i++) {
+
+        let cell = d3.select(`.cell:nth-child(${i})`)
+
+        if (i % 2 !== 0) {
+
+            cell.attr("transform", `translate(${(i - 1) * cellGap}, 0)`)
+        }
+
+
+    }
 
     // radius scale
     const minPopularity = d3.min(data.map(song => song.popularity));
     const maxPopularity = d3.max(data.map(song => song.popularity));
     const radiusScale = d3.scaleLinear()
         .domain([minPopularity, maxPopularity])
-        .range([2, 12]);
+        .range([2, 15]);
 
-    let popularityData = [89, 66.75, 44.5, 22.25, 1]; //osäker om man får göra såhär
+    // Skapar en array med de rätta värdena
+    let highestValue = 100;
+    let lowestValue = 1;
+    let stepValue = (highestValue - lowestValue) / 4;
 
+    let popularityData = [];
+
+    for (let i = 0; i < 5; i++) {
+
+        let newValue = lowestValue + i * stepValue;
+        popularityData.push(newValue);
+
+    }
+
+    // Vänder array:n
+    popularityData.reverse()
 
     legend.append("g")
         .attr("id", "popularityContainer", true)
@@ -316,7 +345,7 @@ function createLegend(data, genres) {
         .enter()
         .append("circle")
         .attr("r", (d) => setRadius(d))
-        .attr("cx", (d, i) => i * 30) // Justera avståndet mellan cirklarna
+        .attr("cx", (d, i) => i * 30 + i * setRadius(d)) // Justera avståndet mellan cirklarna
         .attr("cy", 0)
         .attr("stroke", "grey")
         .attr("stroke-width", 1)
