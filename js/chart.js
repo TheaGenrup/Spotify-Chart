@@ -69,9 +69,9 @@ function createChart(data) {
     // console.log(data.filter(song => song.genre == "hip hop, pop"));
 
     // set variables
-    const heightSvg = 600, widthSvg = 900,
+    const heightSvg = 700, widthSvg = 1000,
         widthCanvas = .80 * widthSvg,
-        heightCanvas = .80 * heightSvg,
+        heightCanvas = .70 * heightSvg,
         widthPad = (widthSvg - widthCanvas) / 2,
         heightPad = (heightSvg - heightCanvas) / 2;
 
@@ -82,7 +82,7 @@ function createChart(data) {
     const maxPopularity = d3.max(data.map(song => song.popularity));
     const radiusScale = d3.scaleLinear()
         .domain([minPopularity, maxPopularity])
-        .range([4, 12]);
+        .range([2, 15]);
 
     // x scale
     let xScale = d3.scaleLinear()
@@ -145,7 +145,7 @@ function createChart(data) {
     slider.value = "2010";
     slider.id = "slider";
 
-    const sliderWidth = 700;
+    const sliderWidth = 800;
 
     let sliderSvg = d3.select("#sliderContainer").append("svg")
         .attr("height", 20).attr("width", sliderWidth)
@@ -197,13 +197,13 @@ function createChart(data) {
         return radiusScale(song.popularity);
     }
 
-    createLegend(data, capitalizedGenres);
+    createLegend(data, capitalizedGenres, widthPad, heightSvg);
 
 
 }
 
 
-function createLegend(data, genres) {
+function createLegend(data, genres, widthPad, heightSvg) {
 
     const colorRange = ["#FF8080", "#FFBE98", "#FFCF96", "#A4CE95", "#CDFADB"];
 
@@ -243,7 +243,9 @@ function createLegend(data, genres) {
         });
     //.orient("horizontal")
 
-    let legend = d3.select("#visualisationSvg").append("g").attr("id", "Legend", true);
+    let legend = d3.select("#visualisationSvg").append("g").attr("id", "Legend", true)
+        .attr("transform", `translate(${0},${100})`)
+        ;
 
     //felet var är att elementet jag placera g:et i inte är ett svg-elemet
 
@@ -253,7 +255,7 @@ function createLegend(data, genres) {
         .call(legendGenres)
         .attr("id", "genresContainer")
         .attr("height", legendHeight)
-        .attr("transform", "translate(100,730)")
+        .attr("transform", `translate(${widthPad},${heightSvg})`)
         .selectAll("text")
         .style("fill", "white");
 
@@ -275,20 +277,6 @@ function createLegend(data, genres) {
         .data(genres)
         .attr("data-genre", genre => genre);
 
-
-    /*     // detta får vi lösa sen
-        d3.select(".cell:nth-child(2)").attr("transform", "translate(0,75)")
-        d3.select(".cell:nth-child(3)").attr("transform", "translate(150,0)")
-        d3.select(".cell:nth-child(4)").attr("transform", "translate(150,75)")
-        d3.select(".cell:nth-child(5)").attr("transform", "translate(300,0)")
-        d3.select(".cell:nth-child(6)").attr("transform", "translate(300,75)")
-        d3.select(".cell:nth-child(7)").attr("transform", "translate(450,0)")
-        d3.select(".cell:nth-child(8)").attr("transform", "translate(450,75)")
-        d3.select(".cell:nth-child(9)").attr("transform", "translate(600,0)")
-        d3.select(".cell:nth-child(10)").attr("transform", "translate(600,75)")
-        d3.select(".cell:nth-child(11)").attr("transform", "translate(750,0)")
-        d3.select(".cell:nth-child(12)").attr("transform", "translate(750,75)")
-     */
     let legendCells = d3.selectAll(".cell");
     let cellGap = 80;
 
@@ -298,7 +286,7 @@ function createLegend(data, genres) {
 
         if (i % 2 === 0) {
 
-            cell.attr("transform", `translate(${(i - 1) * cellGap - cellGap}, 75)`)
+            cell.attr("transform", `translate(${(i - 1) * cellGap - cellGap}, 55)`)
         }
 
     }
@@ -352,7 +340,7 @@ function createLegend(data, genres) {
         .attr("fill", "none");
 
     d3.select("#popularityContainer")
-        .attr("transform", "translate(100,640)")
+        .attr("transform", "translate(100,600)")
         .append("text")
         .text("Popularity")
         .attr("x", -11)
