@@ -8,9 +8,7 @@ d3.csv('data.csv').then(d => {
         if (song.year >= 2010 && song.year <= 2019) {
 
             // Delar upp strängen med genrer till en array med genrer som element
-            let genreArray = song.genre.split(", ");
-
-            genreArray = genreArray.map(genre => genre.toLowerCase());
+            let genreArray = song.genre.split(", ").map(genre => genre.toLowerCase());
 
             data.push({
                 year: song.year,
@@ -56,7 +54,7 @@ function createChart(data) {
 
     const dataFilteredByYear = data.filter(song => parseInt(song.year) === 2010);
 
-    const heightSvg = 675, widthSvg = 1100,
+    const heightSvg = 700, widthSvg = 1100,
         widthCanvas = .80 * widthSvg,
         heightCanvas = .70 * heightSvg,
         widthPad = (widthSvg - widthCanvas) / 2,
@@ -96,7 +94,7 @@ function createChart(data) {
         .attr("text-anchor", "end")
         .append("text")
         .text("Valence")
-        .attr("transform", `translate(${27}, ${-20})`)
+        .attr("transform", `translate(27, -20)`)
         .attr("fill", "#7d867d")
         .attr("font-weight", "bold");
 
@@ -126,32 +124,35 @@ function createChart(data) {
         .attr("cy", (d) => yScale(d.valence))
         .on("mouseover", (event, d) => {
 
-            d3.select(".songContainer").remove();
             d3.select("#visualisationSvg")
                 .append("g")
-                .classed("songContainer", true)
-                .attr("transform", `translate(160, 110)`)
-                .attr("fill", "white")
+                .classed("songInfoContainer", true)
+                .attr("transform", `translate(160, 130)`)
                 .append("text")
                 .text(`${d.name}`)
+                .attr("fill", "white")
                 .style("font-size", "20px")
                 .style("font-weight", "bold")
-            d3.select(".songContainer").append("text").text(`${d.artist}`).attr("transform", `translate(0, 15)`)
+
+            d3.select(".songInfoContainer").append("text")
+                .text(`${d.artist}`)
                 .attr("transform", `translate(0, 25)`)
+                .attr("fill", "lightgrey")
+
 
         })
         .on("mouseout", event => {
-            d3.select(".songContainer").remove();
+            d3.select(".songInfoContainer").remove();
         })
 
     function circleHover(e) {
 
         const dataObject = d3.select(this).datum(); // Get data associated with circle
 
-        d3.select(".songContainer").remove();
+        d3.select(".songInfoContainer").remove();
         d3.select("#visualisationSvg")
             .append("g")
-            .classed("songContainer", true)
+            .classed("songInfoContainer", true)
             .attr("transform", `translate(160, 120)`)
             .attr("fill", "white")
             .append("text")
@@ -159,7 +160,7 @@ function createChart(data) {
             .style("font-size", "20px")
             .style("font-weight", "bold")
 
-        d3.select(".songContainer").append("text")
+        d3.select(".songInfoContainer").append("text")
             .text(`${dataObject.artist}`)
             .attr("transform", `translate(0, 25)`)
 
@@ -171,8 +172,6 @@ function createChart(data) {
     slider.type = "range"; //skapar linje och prick som man drar
     slider.min = "2010";
     slider.max = "2019";
-    slider.value = "2010";
-    slider.id = "slider";
 
     const sliderWidth = 800;
 
@@ -192,7 +191,7 @@ function createChart(data) {
 
     d3.select("input")
         .on("input", event => {
-            const newSliderValue = document.querySelector("#slider").value;
+            const newSliderValue = document.querySelector("input").value;
             const dataFilteredByNewYear = data.filter(song => parseInt(song.year) == newSliderValue);
 
             //Delete previous circles
@@ -202,7 +201,7 @@ function createChart(data) {
                 .remove();
 
 
-            // Update the data bound to the circles
+            // make new circles
             d3.select("#canvas")
                 .selectAll("circle")
                 .data(dataFilteredByNewYear)
@@ -214,74 +213,26 @@ function createChart(data) {
                 .attr("cy", (d) => yScale(d.valence))
                 .on("mouseover", (event, d) => {
 
-                    d3.select(".songContainer").remove();
                     d3.select("#visualisationSvg")
                         .append("g")
-                        .classed("songContainer", true)
-                        .attr("transform", `translate(160, 110)`)
+                        .classed("songInfoContainer", true)
+                        .attr("transform", `translate(160, 130)`)
                         .attr("fill", "white")
                         .append("text")
                         .text(`${d.name}`)
                         .style("font-size", "20px")
                         .style("font-weight", "bold")
-                    d3.select(".songContainer").append("text").text(`${d.artist}`).attr("transform", `translate(0, 15)`)
+                    d3.select(".songInfoContainer").append("text").text(`${d.artist}`).attr("transform", `translate(0, 15)`)
                         .attr("transform", `translate(0, 25)`)
 
                 })
                 .on("mouseout", event => {
-                    d3.select(".songContainer").remove();
+                    d3.select(".songInfoContainer").remove();
                 })
                 .transition()
                 .duration(300)
                 .attr("r", setRadius);
-
         })
-    /* 
-        slider.addEventListener("input", () => {
-            const newSliderValue = document.querySelector("#slider").value;
-            const dataFilteredByNewYear = data.filter(song => parseInt(song.year) == newSliderValue);
-    
-            //Delete previous circles
-            const circles = d3.select("#canvas").selectAll("circle")
-                .data([])
-                .exit()
-                .remove();
-    
-            // Update the data bound to the circles
-            d3.select("#canvas")
-                .selectAll("circle")
-                .data(dataFilteredByNewYear)
-                .enter()
-                .append("circle")
-                .attr("opacity", 0.7)
-                .attr("fill", "white")
-                .attr("cx", (d) => xScale(d.danceability))
-                .attr("cy", (d) => yScale(d.valence))
-                .transition()
-                .duration(300)
-                .attr("r", setRadius)
-                .on("mouseover", (event, d) => {
-    
-                    d3.select(".songContainer").remove();
-                    d3.select("#visualisationSvg")
-                        .append("g")
-                        .classed("songContainer", true)
-                        .attr("transform", `translate(160, 110)`)
-                        .attr("fill", "white")
-                        .append("text")
-                        .text(`${d.name}`)
-                        .style("font-size", "20px")
-                        .style("font-weight", "bold")
-                    d3.select(".songContainer").append("text").text(`${d.artist}`).attr("transform", `translate(0, 15)`)
-                        .attr("transform", `translate(0, 25)`)
-    
-                })
-                .on("mouseout", event => {
-                    d3.select(".songContainer").remove();
-                })
-    
-        }); */
-
 
     function setRadius(song) {
         return radiusScale(song.popularity);
@@ -313,7 +264,7 @@ function createLegend(data, genres, heightSvg) {
                     if (!circle.genre.includes(hoveredGenre)) {
                         return 0.1;
                     }
-                    return 0.9;
+                    return 0.85;
                 })
                 .attr("fill", circle => {
 
@@ -360,7 +311,7 @@ function createLegend(data, genres, heightSvg) {
         let cell = d3.select(`.cell:nth-child(${i})`)
 
         if (i % 2 === 0) {
-            cell.attr("transform", `translate(${(i - 1) * cellGap - cellGap}, 45)`)
+            cell.attr("transform", `translate(${(i - 2) * cellGap}, 50)`)
         }
 
     }
@@ -392,7 +343,6 @@ function createLegend(data, genres, heightSvg) {
 
         let newValue = lowestValue + i * gapValue;
         popularityData.push(newValue);
-
     }
 
     // Vänder array:n
