@@ -56,7 +56,7 @@ function createChart(data) {
 
     const dataFilteredByYear = data.filter(song => parseInt(song.year) === 2010);
 
-    const heightSvg = 700, widthSvg = 1100,
+    const heightSvg = 675, widthSvg = 1100,
         widthCanvas = .80 * widthSvg,
         heightCanvas = .70 * heightSvg,
         widthPad = (widthSvg - widthCanvas) / 2,
@@ -86,6 +86,7 @@ function createChart(data) {
     // create SVG
     let svg = d3.select("#visualisation").append("svg")
         .attr("width", widthSvg).attr("height", heightSvg)
+        .attr("transform", `translate(0, -20)`)
         .attr("id", `visualisationSvg`, true);
 
     // axis
@@ -133,14 +134,36 @@ function createChart(data) {
                 .attr("fill", "white")
                 .append("text")
                 .text(`${d.name}`)
+                .style("font-size", "20px")
+                .style("font-weight", "bold")
             d3.select(".songContainer").append("text").text(`${d.artist}`).attr("transform", `translate(0, 15)`)
+                .attr("transform", `translate(0, 25)`)
 
-            console.log(d.artist, d.name);
         })
         .on("mouseout", event => {
             d3.select(".songContainer").remove();
         })
 
+    function circleHover(e) {
+
+        const dataObject = d3.select(this).datum(); // Get data associated with circle
+
+        d3.select(".songContainer").remove();
+        d3.select("#visualisationSvg")
+            .append("g")
+            .classed("songContainer", true)
+            .attr("transform", `translate(160, 120)`)
+            .attr("fill", "white")
+            .append("text")
+            .text(`${dataObject.name}`)
+            .style("font-size", "20px")
+            .style("font-weight", "bold")
+
+        d3.select(".songContainer").append("text")
+            .text(`${dataObject.artist}`)
+            .attr("transform", `translate(0, 25)`)
+
+    }
 
     // create the slider
     const slider = document.createElement("input");
@@ -160,37 +183,104 @@ function createChart(data) {
         .domain([2010, 2019])
         .range([0, sliderWidth]);
 
-    //Tickformat -> Tar bort kommat som tydligen vill följa med 
-    const sliderAxis = d3.axisBottom(sliderScale)
-        .tickFormat(d => d);
+    //Tickformat -> Tar bort kommat som skapas automatiskt
 
-    sliderSvg.append("g").call(sliderAxis);
+    sliderSvg.append("g")
+        .call(d3.axisBottom(sliderScale)
+            .tickFormat(d => d))
+        .style("stroke-width", "0.5");
 
-    slider.addEventListener("input", () => {
-        const newSliderValue = document.querySelector("#slider").value;
-        const dataFilteredByNewYear = data.filter(song => parseInt(song.year) == newSliderValue);
+    d3.select("input")
+        .on("input", event => {
+            const newSliderValue = document.querySelector("#slider").value;
+            const dataFilteredByNewYear = data.filter(song => parseInt(song.year) == newSliderValue);
 
-        //Delete previous circles
-        const circles = d3.select("#canvas").selectAll("circle")
-            .data([])
-            .exit()
-            .remove();
+            //Delete previous circles
+            const circles = d3.select("#canvas").selectAll("circle")
+                .data([])
+                .exit()
+                .remove();
 
-        // Update the data bound to the circles
-        d3.select("#canvas")
-            .selectAll("circle")
-            .data(dataFilteredByNewYear)
-            .enter()
-            .append("circle")
-            .attr("opacity", 0.7)
-            .attr("fill", "beige")
-            .attr("cx", (d) => xScale(d.danceability))
-            .attr("cy", (d) => yScale(d.valence))
-            .transition()
-            .duration(300)
-            .attr("r", setRadius)
 
-    });
+            // Update the data bound to the circles
+            d3.select("#canvas")
+                .selectAll("circle")
+                .data(dataFilteredByNewYear)
+                .enter()
+                .append("circle")
+                .attr("opacity", 0.7)
+                .attr("fill", "white")
+                .attr("cx", (d) => xScale(d.danceability))
+                .attr("cy", (d) => yScale(d.valence))
+                .on("mouseover", (event, d) => {
+
+                    d3.select(".songContainer").remove();
+                    d3.select("#visualisationSvg")
+                        .append("g")
+                        .classed("songContainer", true)
+                        .attr("transform", `translate(160, 110)`)
+                        .attr("fill", "white")
+                        .append("text")
+                        .text(`${d.name}`)
+                        .style("font-size", "20px")
+                        .style("font-weight", "bold")
+                    d3.select(".songContainer").append("text").text(`${d.artist}`).attr("transform", `translate(0, 15)`)
+                        .attr("transform", `translate(0, 25)`)
+
+                })
+                .on("mouseout", event => {
+                    d3.select(".songContainer").remove();
+                })
+                .transition()
+                .duration(300)
+                .attr("r", setRadius);
+
+        })
+    /* 
+        slider.addEventListener("input", () => {
+            const newSliderValue = document.querySelector("#slider").value;
+            const dataFilteredByNewYear = data.filter(song => parseInt(song.year) == newSliderValue);
+    
+            //Delete previous circles
+            const circles = d3.select("#canvas").selectAll("circle")
+                .data([])
+                .exit()
+                .remove();
+    
+            // Update the data bound to the circles
+            d3.select("#canvas")
+                .selectAll("circle")
+                .data(dataFilteredByNewYear)
+                .enter()
+                .append("circle")
+                .attr("opacity", 0.7)
+                .attr("fill", "white")
+                .attr("cx", (d) => xScale(d.danceability))
+                .attr("cy", (d) => yScale(d.valence))
+                .transition()
+                .duration(300)
+                .attr("r", setRadius)
+                .on("mouseover", (event, d) => {
+    
+                    d3.select(".songContainer").remove();
+                    d3.select("#visualisationSvg")
+                        .append("g")
+                        .classed("songContainer", true)
+                        .attr("transform", `translate(160, 110)`)
+                        .attr("fill", "white")
+                        .append("text")
+                        .text(`${d.name}`)
+                        .style("font-size", "20px")
+                        .style("font-weight", "bold")
+                    d3.select(".songContainer").append("text").text(`${d.artist}`).attr("transform", `translate(0, 15)`)
+                        .attr("transform", `translate(0, 25)`)
+    
+                })
+                .on("mouseout", event => {
+                    d3.select(".songContainer").remove();
+                })
+    
+        }); */
 
 
     function setRadius(song) {
@@ -203,7 +293,7 @@ function createChart(data) {
 
 function createLegend(data, genres, heightSvg) {
 
-    const colorRange = ["#FF8080", "#FFBE98", "#d7adbe", "#f0a967", "#C27664", "#89B9AD", "#ffd380", "#c56477", "#92ba92", "#f7bbad", "#DF7857", "#F99B7D"];
+    const colorRange = ["#FF8080", "#61a587", "#b79dbf", "#f0a967", "#C27664", "#89B9AD", "#ffd380", "#c56477", "#92ba92", "#f7bbad", "#DF7857", "#adc5cf"];
 
     //skapar skalan
     let colorScale = d3.scaleOrdinal(genres, colorRange);
@@ -251,7 +341,7 @@ function createLegend(data, genres, heightSvg) {
         .call(legendGenres)
         .attr("id", "genresContainer")
         .attr("height", legendHeight)
-        .attr("transform", `translate(100,${heightSvg})`)
+        .attr("transform", `translate(80,${heightSvg - 70})`)
         .selectAll("text")
         .style("fill", "white");
 
@@ -270,7 +360,7 @@ function createLegend(data, genres, heightSvg) {
         let cell = d3.select(`.cell:nth-child(${i})`)
 
         if (i % 2 === 0) {
-            cell.attr("transform", `translate(${(i - 1) * cellGap - cellGap}, 55)`)
+            cell.attr("transform", `translate(${(i - 1) * cellGap - cellGap}, 45)`)
         }
 
     }
@@ -321,10 +411,11 @@ function createLegend(data, genres, heightSvg) {
         .attr("fill", "white");
 
     d3.select("#popularityContainer")
-        .attr("transform", "translate(100,600)")
+        //    .attr("transform", "translate(100, 580)")
+        .attr("transform", `translate(1100, 50)`)
         .append("text")
         .text("Popularity")
-        .attr("x", -11)
+        .attr("x", -16)
         .attr("y", -35)
         .style("fill", "white")
         .style("font-weight", "bold");
@@ -333,4 +424,13 @@ function createLegend(data, genres, heightSvg) {
     function setRadius(data) {
         return radiusScale(data);
     }
+
+
+
+    d3.select("#popularityContainer").append("g")
+        .call(d3.axisBottom(d3.scaleLinear([1, 0], [0, 150]))
+            .tickValues([0, 1])
+            .tickFormat(d => d))
+        .attr("transform", `translate(-17, 25)`)
+
 }

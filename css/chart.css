@@ -25,6 +25,7 @@ svg {
     flex-direction: column;
     gap: 0;
     align-items: center;
+
 }
 
 input {
@@ -70,6 +71,4 @@ input::-moz-range-thumb {
 #visualisationSvg {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
 }
