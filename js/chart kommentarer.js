@@ -1,11 +1,13 @@
 
 d3.csv('data.csv').then(d => {
 
+
     let data = [];
 
     for (const song of d) {
         if (song.year >= 2010 && song.year <= 2019) {
 
+            // Delar upp strängen med genrer till en array med genrer som element
             let genreArray = song.genre.split(", ").map(genre => genre.toLowerCase());
 
             data.push({
@@ -40,6 +42,7 @@ function createChart(data) {
 
     let capitalizedGenres = genres.map(str => str.charAt(0).toUpperCase() + str.slice(1));
 
+    // get all years and active year
     const years = [];
     data.forEach(song => {
 
@@ -57,29 +60,34 @@ function createChart(data) {
         widthPad = (widthSvg - widthCanvas) / 2,
         heightPad = (heightSvg - heightCanvas) / 2;
 
+    // scales
 
+    // radius scale
     const minPopularity = d3.min(data.map(song => song.popularity));
     const maxPopularity = d3.max(data.map(song => song.popularity));
     const radiusScale = d3.scaleLinear()
         .domain([minPopularity, maxPopularity])
         .range([2, 15]);
 
+    // x scale
     let xScale = d3.scaleLinear()
         .domain([0, 1])
         .range([0, widthCanvas]);
 
 
+    // y scale
     let yScale = d3.scaleLinear()
         .domain([0, 1])
         .range([heightCanvas, 0]);
 
 
+    // create SVG
     let svg = d3.select("#visualisation").append("svg")
         .attr("width", widthSvg).attr("height", heightSvg)
         .attr("transform", `translate(0, -20)`)
         .attr("id", `visualisationSvg`, true);
 
-
+    // axis
     svg.append("g")
         .call(d3.axisLeft(yScale))
         .attr("transform", `translate(${widthPad}, ${heightPad})`)
@@ -104,8 +112,7 @@ function createChart(data) {
     let canvas = svg.append("g")
         .attr("transform", `translate(${widthPad}, ${heightPad})`)
         .attr("id", `canvas`, true)
-
-    canvas.selectAll("rect")
+        .selectAll("rect")
         .data(dataFilteredByYear)
         .enter()
         .append("circle")
@@ -120,9 +127,10 @@ function createChart(data) {
             d3.select(".songInfoContainer").remove();
         })
 
+    // create the slider
     const slider = document.createElement("input");
     document.querySelector("#sliderContainer").append(slider);
-    slider.type = "range";
+    slider.type = "range"; //skapar linje och prick som man drar
     slider.min = "2010";
     slider.max = "2019";
 
@@ -135,6 +143,7 @@ function createChart(data) {
         .domain([2010, 2019])
         .range([0, sliderWidth]);
 
+    //Tickformat -> Tar bort kommat som skapas automatiskt
 
     sliderSvg.append("g")
         .call(d3.axisBottom(sliderScale)
@@ -146,11 +155,14 @@ function createChart(data) {
             const newSliderValue = document.querySelector("input").value;
             const dataFilteredByNewYear = data.filter(song => parseInt(song.year) == newSliderValue);
 
+            //Delete previous circles
             const circles = d3.select("#canvas").selectAll("circle")
                 .data([])
                 .exit()
                 .remove();
 
+
+            // make new circles
             d3.select("#canvas")
                 .selectAll("circle")
                 .data(dataFilteredByNewYear)
@@ -181,8 +193,10 @@ function createLegend(data, genres, heightSvg) {
 
     const colorRange = ["#FF8080", "#61a587", "#b79dbf", "#f0a967", "#C27664", "#89B9AD", "#ffd380", "#c56477", "#92ba92", "#f7bbad", "#DF7857", "#adc5cf"];
 
+    //skapar skalan
     let colorScale = d3.scaleOrdinal(genres, colorRange);
 
+    //skapar legenden av skalan
     let legendGenres = d3.legendColor()
         .scale(colorScale)
         .shape("circle")
@@ -258,12 +272,14 @@ function createLegend(data, genres, heightSvg) {
 
     }
 
+    // radius scale
     const minPopularity = d3.min(data.map(song => song.popularity));
     const maxPopularity = d3.max(data.map(song => song.popularity));
     const radiusScale = d3.scaleLinear()
         .domain([minPopularity, maxPopularity])
         .range([2, 15]);
 
+    // Skapar en array med de rätta värdena
     let highestValue = 100;
     let lowestValue = 1;
     let gapValue = (highestValue - lowestValue) / 4;
@@ -276,6 +292,7 @@ function createLegend(data, genres, heightSvg) {
         popularityData.push(newValue);
     }
 
+    // Vänder array:n
     popularityData.reverse()
 
     legend.append("g")
@@ -285,12 +302,13 @@ function createLegend(data, genres, heightSvg) {
         .enter()
         .append("circle")
         .attr("r", (d) => setRadius(d))
-        .attr("cx", (d, i) => i * 30 + i * setRadius(d))
+        .attr("cx", (d, i) => i * 30 + i * setRadius(d)) // Justera avståndet mellan cirklarna
         .attr("cy", 0)
         .attr("opacity", 0.7)
         .attr("fill", "white");
 
     d3.select("#popularityContainer")
+        //    .attr("transform", "translate(100, 580)")
         .attr("transform", `translate(1100, 50)`)
         .append("text")
         .text("Popularity")
@@ -305,6 +323,7 @@ function createLegend(data, genres, heightSvg) {
     }
 
 
+
     d3.select("#popularityContainer").append("g")
         .call(d3.axisBottom(d3.scaleLinear([1, 0], [0, 150]))
             .tickValues([0, 1])
@@ -316,7 +335,7 @@ function createLegend(data, genres, heightSvg) {
 
 function circleHover(e) {
 
-    const dataObject = d3.select(this).datum();
+    const dataObject = d3.select(this).datum(); // Get data associated with circle
 
     d3.select(".songInfoContainer").remove();
     d3.select("#visualisationSvg")
