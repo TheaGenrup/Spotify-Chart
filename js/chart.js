@@ -112,7 +112,8 @@ function createChart(data) {
     let canvas = svg.append("g")
         .attr("transform", `translate(${widthPad}, ${heightPad})`)
         .attr("id", `canvas`, true)
-        .selectAll("rect")
+
+    canvas.selectAll("rect")
         .data(dataFilteredByYear)
         .enter()
         .append("circle")
